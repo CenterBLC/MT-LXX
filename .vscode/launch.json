@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python: python_imitated_ipynb.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "H:/My Drive/eduAndrews/_WORK/TF_Projects_VS/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/python_imitated_ipynb.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "H:/My Drive/eduAndrews/_WORK/TF_Projects_VS/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/env1/Lib/site-packages",
+                "USERPROFILE": "H:/My Drive/eduAndrews/_WORK/TF_Projects_VS"
+            },
+        }
+        // ,
+        // {
+        //     "name": "Python: abc.ipynb",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "program": "H:/My Drive/eduAndrews/_WORK/TF_Projects_VS/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/abc.ipynb",
+        //     "console": "integratedTerminal",
+        //     "justMyCode": true
+        // }
+    ]
+}

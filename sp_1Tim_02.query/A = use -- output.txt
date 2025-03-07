@@ -1,0 +1,675 @@
+A = use("sergpanf/LXX-Link:clone", backend="TF.Convert.XML_BackEnd", checkout="clone", hoist=globals())
+
+**Locating corpus resources ...**
+<b title="local github">app:</b> <span title="repo clone offline under h:/My Drive/eduAndrews/_WORK/TF_Projects_VS/tf.convert.xml_backend">~/tf.convert.xml_backend/sergpanf/LXX-Link/app</span>
+
+<b title="local github">data:</b> <span title="repo clone offline under h:/My Drive/eduAndrews/_WORK/TF_Projects_VS/tf.convert.xml_backend">~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1</span>
+
+<b>TF:</b> <a target="_blank" href="https://annotation.github.io/text-fabric/tf/cheatsheet.html" title="text-fabric api">TF API 12.6.3</a>, <a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/app" title="sergpanf/LXX-Link app">sergpanf/LXX-Link/app  v3</a>, <a target="_blank" href="https://annotation.github.io/text-fabric/tf/about/searchusage.html" title="Search Templates Introduction and Reference">Search Reference</a><br>
+            <b>Data:</b> <a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/about.md" title="provenance of sergpanf - LXX-Link/tf">sergpanf - LXX-Link 0.0.1</a>, <a target="_blank" href="https://annotation.github.io/text-fabric/tf/writing/" title="How TF features represent text">Character table</a>, <a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="sergpanf - LXX-Link feature documentation">Feature docs</a><br>
+            <details class="nodeinfo"><summary><b>Node types</b></summary>
+<table class="nodeinfo">
+    <tr>
+        <th>Name</th>
+        <th># of nodes</th>
+        <th># slots / node</th>
+        <th>% coverage</th>
+    </tr>
+
+<tr>
+    <th>book</th>
+    <td>1</td>
+    <td>1588.00</td>
+    <td><b>100</b></td>
+</tr>
+
+<tr>
+    <th>chapter</th>
+    <td>6</td>
+    <td>264.67</td>
+    <td><b>100</b></td>
+</tr>
+
+<tr>
+    <th>sentence</th>
+    <td>89</td>
+    <td>17.84</td>
+    <td><b>100</b></td>
+</tr>
+
+<tr>
+    <th>verse</th>
+    <td>113</td>
+    <td>14.05</td>
+    <td><b>100</b></td>
+</tr>
+
+<tr>
+    <th>clause</th>
+    <td>345</td>
+    <td>8.83</td>
+    <td><i>192</i></td>
+</tr>
+
+<tr>
+    <th>wg</th>
+    <td>1210</td>
+    <td>7.19</td>
+    <td><i>548</i></td>
+</tr>
+
+<tr>
+    <th>phrase</th>
+    <td>794</td>
+    <td>2.93</td>
+    <td><i>147</i></td>
+</tr>
+
+<tr>
+    <th>subphrase</th>
+    <td>1570</td>
+    <td>2.12</td>
+    <td><i>210</i></td>
+</tr>
+
+<tr>
+    <th><i>word</i></th>
+    <td>1588</td>
+    <td>1.00</td>
+    <td><b>100</b></td>
+</tr>
+</table></details>
+            <b>Sets:</b> no custom sets<br>
+            <b>Features:</b><br>
+<details><summary><b>sergpanf - LXX-Link/tf</b></summary>
+    <div class="fcorpus">
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/after.tf">after</a>
+</div>
+<div class="fmono">str</div>
+
+<span> material after the end of the word</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/articular.tf">articular</a>
+</div>
+<div class="fmono">int</div>
+
+<span> 1 if the sentence, group, clause, phrase or wg has an article</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/before.tf">before</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute before</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/book.tf">book</a>
+</div>
+<div class="fmono">str</div>
+
+<span> book name (full name)</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/bookshort.tf">bookshort</a>
+</div>
+<div class="fmono">str</div>
+
+<span> book name (abbreviated) from ref attribute in xml</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/case.tf">case</a>
+</div>
+<div class="fmono">str</div>
+
+<span> grammatical case</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/chapter.tf">chapter</a>
+</div>
+<div class="fmono">int</div>
+
+<span> chapter number, from ref attribute in xml</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/clausetype.tf">clausetype</a>
+</div>
+<div class="fmono">str</div>
+
+<span> clause type</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/cls.tf">cls</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute cls</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/cltype.tf">cltype</a>
+</div>
+<div class="fmono">str</div>
+
+<span> clause type</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/criticalsign.tf">criticalsign</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute criticalsign</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/crule.tf">crule</a>
+</div>
+<div class="fmono">str</div>
+
+<span> clause rule (from xml attribute Rule)</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/degree.tf">degree</a>
+</div>
+<div class="fmono">str</div>
+
+<span> grammatical degree</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/discontinuous.tf">discontinuous</a>
+</div>
+<div class="fmono">int</div>
+
+<span> 1 if the word is out of sequence in the xml</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/domain.tf">domain</a>
+</div>
+<div class="fmono">str</div>
+
+<span> domain</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/framespec.tf">framespec</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute framespec</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/function.tf">function</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute function</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/gender.tf">gender</a>
+</div>
+<div class="fmono">str</div>
+
+<span> grammatical gender</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/gloss.tf">gloss</a>
+</div>
+<div class="fmono">str</div>
+
+<span> short translation</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/id.tf">id</a>
+</div>
+<div class="fmono">str</div>
+
+<span> xml id</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/junction.tf">junction</a>
+</div>
+<div class="fmono">str</div>
+
+<span> type of junction</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/lang.tf">lang</a>
+</div>
+<div class="fmono">str</div>
+
+<span> language the text is in</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/lemma.tf">lemma</a>
+</div>
+<div class="fmono">str</div>
+
+<span> lexical lemma</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/lemmatranslit.tf">lemmatranslit</a>
+</div>
+<div class="fmono">str</div>
+
+<span> transliteration of the word lemma</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/ln.tf">ln</a>
+</div>
+<div class="fmono">str</div>
+
+<span> ln</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/mood.tf">mood</a>
+</div>
+<div class="fmono">str</div>
+
+<span> verbal mood</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/morph.tf">morph</a>
+</div>
+<div class="fmono">str</div>
+
+<span> morphological code</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/nodeid.tf">nodeid</a>
+</div>
+<div class="fmono">str</div>
+
+<span> node id (as in the XML source data)</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/normalized.tf">normalized</a>
+</div>
+<div class="fmono">str</div>
+
+<span> lemma normalized</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/num.tf">num</a>
+</div>
+<div class="fmono">int</div>
+
+<span> generated number (not in xml): book: (Matthew=1, Mark=2, ..., Revelation=27); sentence: numbered per chapter; word: numbered per verse.</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/number.tf">number</a>
+</div>
+<div class="fmono">str</div>
+
+<span> grammatical number</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/otype.tf">otype</a>
+</div>
+<div class="fmono">str</div>
+
+<span> </span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/person.tf">person</a>
+</div>
+<div class="fmono">str</div>
+
+<span> grammatical person</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/punctuation.tf">punctuation</a>
+</div>
+<div class="fmono">str</div>
+
+<span> punctuation found after a word</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/ref.tf">ref</a>
+</div>
+<div class="fmono">str</div>
+
+<span> biblical reference with word counting</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/referent.tf">referent</a>
+</div>
+<div class="fmono">str</div>
+
+<span> number of referent</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/role.tf">role</a>
+</div>
+<div class="fmono">str</div>
+
+<span> role</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/rule.tf">rule</a>
+</div>
+<div class="fmono">str</div>
+
+<span> syntactical rule</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/sp.tf">sp</a>
+</div>
+<div class="fmono">str</div>
+
+<span> part-of-speach</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/strong.tf">strong</a>
+</div>
+<div class="fmono">int</div>
+
+<span> strong number</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/subjrefspec.tf">subjrefspec</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute subjrefspec</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/tense.tf">tense</a>
+</div>
+<div class="fmono">str</div>
+
+<span> verbal tense</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/text.tf">text</a>
+</div>
+<div class="fmono">str</div>
+
+<span> the text of a word</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/trailer.tf">trailer</a>
+</div>
+<div class="fmono">str</div>
+
+<span> material after the end of the word (excluding critical signs)</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/trans.tf">trans</a>
+</div>
+<div class="fmono">str</div>
+
+<span> translation of the word surface text according to the Berean Interlinear Bible</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/translit.tf">translit</a>
+</div>
+<div class="fmono">str</div>
+
+<span> transliteration of the word surface text</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/typ.tf">typ</a>
+</div>
+<div class="fmono">str</div>
+
+<span> syntactical type (on sentence, group, clause or phrase)</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/typems.tf">typems</a>
+</div>
+<div class="fmono">str</div>
+
+<span> morphological type (on word), syntactical type (on sentence, group, clause, phrase or wg)</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/unaccent.tf">unaccent</a>
+</div>
+<div class="fmono">str</div>
+
+<span> word in unicode characters without accents and diacritical markers</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/unicode.tf">unicode</a>
+</div>
+<div class="fmono">str</div>
+
+<span> word in unicode characters plus material after it</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/variant.tf">variant</a>
+</div>
+<div class="fmono">str</div>
+
+<span> this is XML attribute variant</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/verse.tf">verse</a>
+</div>
+<div class="fmono">int</div>
+
+<span> verse number, from ref attribute in xml</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat ">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/voice.tf">voice</a>
+</div>
+<div class="fmono">str</div>
+
+<span> verbal voice</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat edge">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/frame.tf">frame</a>
+</div>
+<div class="fmono">str</div>
+
+<span> frame</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat edge">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/oslots.tf">oslots</a>
+</div>
+<div class="fmono">none</div>
+
+<span> </span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat edge">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/parent.tf">parent</a>
+</div>
+<div class="fmono">none</div>
+
+<span> parent relationship between words</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat edge">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/sibling.tf">sibling</a>
+</div>
+<div class="fmono">int</div>
+
+<span> this is XML attribute sibling</span>
+
+</div>
+
+<div class="frow">
+    <div class="fnamecat edge">
+<a target="_blank" href="https://tf.convert.xml_backend/sergpanf/LXX-Link/blob/main/docs/transcription.md" title="~/tf.convert.xml_backend/sergpanf/LXX-Link/tf/0.0.1/subjref.tf">subjref</a>
+</div>
+<div class="fmono">none</div>
+
+<span> number of subject referent</span>
+
+</div>
+
+    </div>
+</details>
+
+            <b>Settings:</b><br><details ><summary><b>specified</b></summary><ol><li><b>apiVersion</b>: <code>3</code></li><li><b>appName</b>: <code>sergpanf/LXX-Link</code></li><li><details><summary><b>appPath</b>:</summary><code>h:/My Drive/eduAndrews/_WORK/TF_Projects_VS/tf.convert.xml_backend/sergpanf/LXX-Link/app</code></details></li><li><b>commit</b>: <i>no value</i></li><li><b>css</b>: <code>''</code></li><li><details><summary><b>dataDisplay</b>:</summary><ul><li><b>excludedFeatures</b>: <code>[]</code></li><li><details><summary><b>noneValues</b>:</summary><ul><li><code>none</code></li><li><code>unknown</code></li><li><i>no value</i></li><li><code>NA</code></li></ul></details></li><li><b>sectionSep1</b>: <code>@</code></li><li><b>textFormat</b>: <code>text-orig-full</code></li></ul></details></li><li><details><summary><b>docs</b>:</summary><ul><li><b>docPage</b>: <code>about</code></li><li><b>featureBase</b>: <code>{docBase}/transcription.md</code></li><li><b>featurePage</b>: <code>transcription</code></li></ul></details></li><li><b>interfaceDefaults</b>: {<b>fmt</b>: <code>text-orig-full</code>}</li><li><b>isCompatible</b>: <code>True</code></li><li><b>local</b>: <code>clone</code></li><li><details><summary><b>localDir</b>:</summary><code>h:/My Drive/eduAndrews/_WORK/TF_Projects_VS/tf.convert.xml_backend/sergpanf/LXX-Link/_temp</code></details></li><li><details><summary><b>provenanceSpec</b>:</summary><ul><li><b>branch</b>: <code>main</code></li><li><b>corpus</b>: <code>{org} - {repo}{relative}</code></li><li><b>doi</b>: <code>10.5281/zenodo.notyet</code></li><li><b>moduleSpecs</b>: <code>[]</code></li><li><b>org</b>: <code>sergpanf</code></li><li><b>relative</b>: <code>/tf</code></li><li><b>repo</b>: <code>LXX-Link</code></li><li><b>version</b>: <code>0.0.1</code></li><li><b>webBase</b>: <code>https://public.{org}.org/{repo}</code></li><li><b>webHint</b>: <code>Show this on the website</code></li><li><b>webLang</b>: <code>en</code></li><li><details><summary><b>webUrl</b>:</summary><code>{webBase}/&lt;1&gt;/&lt;2&gt;/&lt;3&gt;&amp;version={version}</code></details></li><li><b>webUrlLex</b>: <code>{webBase}/word?version={version}&amp;id=&lt;lid&gt;</code></li></ul></details></li><li><b>release</b>: <i>no value</i></li><li><b>typeDisplay</b>: <code>{}</code></li><li><b>writing</b>: <code>''</code></li></ol></details>
+
+
+
+
+<div><b>TF API:</b> names <a target="_blank" href="https://annotation.github.io/text-fabric/tf/cheatsheet.html" title="doc">N F E L T S C TF Fs Fall Es Eall Cs Call</a> directly usable</div><hr>

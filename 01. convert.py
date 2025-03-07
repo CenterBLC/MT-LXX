@@ -71,7 +71,6 @@ X = XML(
 # %%
 X.task(check=True)
 
-
 # %%
 a = 1
 X.task(convert=True)
@@ -81,6 +80,3 @@ X.task(load=True)
 
 # # %%
 X.task(app=True)
-
-
-# %%

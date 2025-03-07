@@ -4,8 +4,6 @@ from lxml import etree
 from io import BytesIO
 from unidecode import unidecode
 import unicodedata as ud
-#sergpanf
-#import ipdb
 
 from tf.core.helpers import console
 from tf.core.files import initTree, unexpanduser as ux
@@ -16,9 +14,6 @@ from tf.convert.helpers import XNEST, TNEST, TSIB
 # xml version with the first sentence of Jude twice:
 # once without and once with slot reordering
 demoMode = False
-
-#breakpoint()
-#ipdb.set_trace()	
 
 book_name = {'MAT': 'Matthew', 'MRK': 'Mark', 'LUK': 'Luke', 'JHN': 'John', 'ACT': 'Acts', 'ROM': 'Romans', '1CO': 'I_Corinthians',
             '2CO': 'II_Corinthians', 'GAL': 'Galatians', 'EPH': 'Ephesians', 'PHP': 'Philippians', 'COL': 'Colossians',
@@ -420,7 +415,6 @@ def getDirector(self):
 
             cur[TSIB].append([])
 
-## sp_: crash takes place when entering <w> tag (see the "cur" element)
         for child in xnode.iterchildren(tag=etree.Element):
             walkNode(cv, cur, child)
         
@@ -496,7 +490,7 @@ def getDirector(self):
             atts["text"] = xnode.text #text shown in the conversor is provided by the text of the XML element
             
             unicode = atts.get('unicode')
-            after = atts.get('after') or ''
+            after = atts.get('after')
 
             # Definition of trailer
             trailer = " "
@@ -566,14 +560,14 @@ def getDirector(self):
             atts['trailer'] = trailer
 
             # adding space after signs
-            #after=atts.get('after') # after has already been defined previously (with a fixed line now)
-            if after != " " and after != "" : # added after != "", since in the LXX this can happen
+            after=atts.get('after') 
+            if after != " ":
                 atts.update({'after': after + " "})
 
             #updating lemma
             lemma = atts.get('lemma')
             txt = atts.get('text')
-            normalized = atts.get('normalized') or '' # fixed
+            normalized = atts.get('normalized')
 
             for character, replacement in character_substitution.items():
                 if character in lemma:

@@ -415,6 +415,7 @@ def getDirector(self):
 
             cur[TSIB].append([])
 
+## sp_: crash takes place when entering <w> tag (see the "cur" element)
         for child in xnode.iterchildren(tag=etree.Element):
             walkNode(cv, cur, child)
         
@@ -490,7 +491,7 @@ def getDirector(self):
             atts["text"] = xnode.text #text shown in the conversor is provided by the text of the XML element
             
             unicode = atts.get('unicode')
-            after = atts.get('after')
+            after = atts.get('after') or ''
 
             # Definition of trailer
             trailer = " "
@@ -560,14 +561,14 @@ def getDirector(self):
             atts['trailer'] = trailer
 
             # adding space after signs
-            after=atts.get('after') 
-            if after != " ":
+            #after=atts.get('after') # after has already been defined previously (with a fixed line now)
+            if after != " " and after != "" : # added after != "", since in the LXX this can happen
                 atts.update({'after': after + " "})
 
             #updating lemma
             lemma = atts.get('lemma')
             txt = atts.get('text')
-            normalized = atts.get('normalized')
+            normalized = atts.get('normalized') or '' # fixed
 
             for character, replacement in character_substitution.items():
                 if character in lemma:

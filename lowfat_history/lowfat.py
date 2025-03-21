@@ -1,6 +1,9 @@
+from multiprocessing.resource_sharer import stop
 import re
 from lxml import etree
 from io import BytesIO
+from unidecode import unidecode
+import unicodedata as ud
 
 from tf.core.helpers import console
 from tf.core.files import initTree, unexpanduser as ux
@@ -12,6 +15,74 @@ from tf.convert.helpers import XNEST, TNEST, TSIB
 # once without and once with slot reordering
 demoMode = False
 
+book_name = {'MAT': 'Matthew', 'MRK': 'Mark', 'LUK': 'Luke', 'JHN': 'John', 'ACT': 'Acts', 'ROM': 'Romans', '1CO': 'I_Corinthians',
+            '2CO': 'II_Corinthians', 'GAL': 'Galatians', 'EPH': 'Ephesians', 'PHP': 'Philippians', 'COL': 'Colossians',
+            '1TH': 'I_Thessalonians', '2TH': 'II_Thessalonians', '1TI': 'I_Timothy', '2TI': 'II_Timothy', 'TIT': 'Titus', 'PHM': 'Philemon',
+            'HEB': 'Hebrews', 'JAS': 'James', '1PE': 'I_Peter','2PE': 'II_Peter', '1JN': 'I_John', '2JN': 'II_John', '3JN': 'III_John',
+            'JUD': 'Jude', 'REV': 'Revelation'}
+
+type_features = {"adjp": "AdjP",
+                 "advp": "AdvP",
+                 "np": "NP",
+                 "pp": "PP",
+                 "vp": "VP"}
+
+role_features_wg = {"io": "Cmpl",
+                 "o": "Objc",
+                 "o2": "Objc",
+                 "p": "PreC",
+                 "s": "Subj",
+                 "vc": "PreC",
+                 "adv": "Cmpl"}
+
+role_features_word = {"io": "Cmpl",
+                 "o": "Objc",
+                 "o2": "Objc",
+                 "v": "Pred",
+                 "vc": "PreC",
+                 "s": "Subj",
+                 "p": "PreC",
+                 "adv": "Adv"}
+
+clause_features = {"ADV": "Cmpl",
+                   "IO": "Cmpl",
+                   "O": "Obj",
+                   "O2": "Obj",
+                   "P": "PreC",
+                   "S": "Subj",
+                   "V": "Pred",
+                   "VC": "PreC"}
+
+pds = {'adj': 'adjv',
+       'adv': 'advb',
+       'det': 'art',
+       'noun': 'subs',
+       'ptcl': 'intj'}
+
+character_substitution = {'ά': 'ά',
+                          'έ': 'έ',
+                          'ή': 'ή',
+                          'ί': 'ί',
+                          'ΐ': 'ΐ',
+                          'ό': 'ό',
+                          'ύ': 'ύ',
+                          'ΰ': 'ΰ',
+                          'ώ': 'ώ'}
+
+punctuation_signs = r"[,.;·]"
+criticalsign_signs = r"[—()]"
+
+cl_dictionary = ["CLaCL", "CLa2CL", "CLandCL2", "CLandClClandClandClandCl",
+                 "ClCl", "ClClCl", "ClClClCl", "ClClClClCl", "ClClClClClCl", 
+                "ClClClClClClCl", "ClClClClClClClCl", "ClClClClClClClClCl",
+                "ClClClClClClClClCl", "ClClClClClClClClClCl", "ClClClClClClClClClClClCl", "ClCl2"]
+
+final_verbal_phrases = {'participle': 'PreC',
+                        'infinitive': 'PreC',
+                        'indicative': 'Pred',
+                        'subjunctive': 'Pred',
+                        'imperative': 'Pred',
+                        'optative': 'Pred'}
 
 def convertTaskCustom(self):
     """Implementation of the "convert" task.
@@ -22,7 +93,7 @@ def convertTaskCustom(self):
 
     *   **parents/siblings**
         We only compute parents and siblings for de `wg` elements and their
-        descendant elements (only `wg` and `w`.
+        descendant elements (only `wg` and `w`).
 
         If we would do siblings between sentences, the sibling feature would grow
         enormously and take up 40% of the dataset.
@@ -38,7 +109,7 @@ def convertTaskCustom(self):
         corresponding information.
 
     *   Clause and phrase nodes have been added, they duplicate some of the `wg`
-        nodes. Only for `wg`-s with an attribute `class`.
+        nodes. Only for wg-s with an attribute `class`.
 
         * clauses are `wg` with `class="cl"`
         * phrases are `wg` with `class` something else, but not empty
@@ -59,25 +130,115 @@ def convertTaskCustom(self):
     if verbose == 1:
         console(f"XML to TF converting: {ux(xmlPath)} => {ux(tfPath)}")
 
-    slotType = "w"
+    slotType = "word"
     otext = {
-        "fmt:text-orig-full": "{text}{after}",
+        "fmt:text-orig-full": "{before}{text}{after}",
+        "fmt:text-orig-plain": "{text}{trailer}",
+        "fmt:text-translit-plain": "{translit}{trailer}",
+        "fmt:text-unaccent-plain": "{unaccent}{trailer}",
+        "fmt:lex-orig-plain": "{lemma}{trailer}",
+        "fmt:lex-translit-plain": "{lemmatranslit}{trailer}",
         "sectionTypes": "book,chapter,verse",
         "sectionFeatures": "book,chapter,verse",
+        "levelConstraints": "clause < group",
     }
     monoAtts = {"appositioncontainer", "articular", "discontinuous"}
 
+    intFeatures = {
+        "appositioncontainer",
+        "articular",
+        "chapter",
+        "discontinuous",
+        "num",
+        "strong",
+        "verse",
+        "sibling",
+    }
+    featureMeta = (
+        ("after", "material after the end of the word"),
+        ("appositioncontainer", "1 if it is an apposition container"),
+        ("articular", "1 if the sentence, group, clause, phrase or wg has an article"),
+        ("book", "book name (full name)"),
+        ("bookshort", "book name (abbreviated) from ref attribute in xml"),
+        ("case", "grammatical case"),
+        ("chapter", "chapter number, from ref attribute in xml"),
+        ("class", "morphological class (on word); syntactical class (on sentence, group, clause, phrase or wg)"),
+        ("clausetype", "clause type"),
+        ("cltype", "clause type"),
+        ("crule", "clause rule (from xml attribute Rule)"),
+        ("degree", "grammatical degree"),
+        ("discontinuous", "1 if the word is out of sequence in the xml"),
+        ("domain", "domain"),
+        ("frame", "frame"),
+        ("gender", "grammatical gender"),
+        ("gloss", "short translation"),
+        ("id", "xml id"),
+        ("junction", "type of junction"),
+        ("lang", "language the text is in"),
+        ("lemma", "lexical lemma"),
+        ("lemmatranslit", "transliteration of the word lemma"),
+        ("ln", "ln"),
+        ("mood", "verbal mood"),
+        ("morph", "morphological code"),
+        ("nodeid", "node id (as in the XML source data)"),
+        ("normalized", "lemma normalized"),
+        (
+            "num",
+            (
+                "generated number (not in xml): "
+                "book: (Matthew=1, Mark=2, ..., Revelation=27); "
+                "sentence: numbered per chapter; "
+                "word: numbered per verse."
+            ),
+        ),
+        ("number", "grammatical number"),
+        ("note", "annotation of linguistic nature"),
+        ("parent", "parent relationship between words"),
+        ("person", "grammatical person"),
+        ("punctuation", "punctuation found after a word"),
+        ("ref", "biblical reference with word counting"),
+        ("referent", "number of referent"),
+        ("sibling", "simbling relationship between words"),
+        ("sp", "part-of-speach"),
+        ("strong", "strong number"),
+        ("subjref", "number of subject referent"),
+        ("role", "role"),
+        ("rule", "syntactical rule"),
+        ("text", "the text of a word"),
+        ("tense", "verbal tense"),
+        ("translit", "transliteration of the word surface text"),
+        ("trailer", "material after the end of the word (excluding critical signs)"),
+        ("trans", "translation of the word surface text according to the Berean Interlinear Bible"),
+        ("typems", "morphological type (on word), syntactical type (on sentence, group, clause, phrase or wg)"),
+        ("typ", "syntactical type (on sentence, group, clause or phrase)"),
+        ("unicode", "word in unicode characters plus material after it"),
+        ("unaccent", "word in unicode characters without accents and diacritical markers"),
+        ("verse", "verse number, from ref attribute in xml"),
+        ("voice", "verbal voice")
+    )
+    featureMeta = {k: dict(description=v) for (k, v) in featureMeta}
+
     self.monoAtts = monoAtts
+    self.intFeatures = intFeatures
+    self.featureMeta = featureMeta
 
     tfVersion = self.tfVersion
     xmlVersion = self.xmlVersion
     generic = self.generic
-    generic["sourceFormat"] = "XML"
+    generic["author"] = "Evangelists and apostles" #information about the authors and the version of the datasource
+    generic["editors"] = "Eberhart Nestle (1904)"
+    generic["title"] = "Greek New Testament (Nestle 1904)"
+    generic["institute"] = "ETCBC (Eep Talstra Centre for Bible and Computer) at Vrije Universiteit Amsterdam, CBLC (Center of Biblical Languages and Computing) at Andrews University"
+    generic["converters"] = "Saulo de Oliveira Cantanhêde, Tony Jurg, Dirk Roorda"
+    generic["converterSourceLocation"] = "https://github.com/saulocantanhede/tfgreek2/tree/main/programs"
+    generic["converterVersion"] = "1.0.0 (July 9, 2024)"
+    generic["dataSourceFormat"] = "XML lowfat tree data"
+    generic["dataSource"] = "MACULA Greek Linguistic Datasets, available at https://github.com/Clear-Bible/macula-greek/tree/main/Nestle1904/lowfat"
+    generic["dataSourceLocation"] = "https://github.com/saulocantanhede/tfgreek2/tree/main/xml/2022-11-01/gnt"
     generic["version"] = tfVersion
     generic["xmlVersion"] = xmlVersion
-    intFeatures = self.intFeatures
-    featureMeta = self.featureMeta
-
+    generic["xmlSourceDate"] = "February 9, 2023"
+   
     initTree(tfPath, fresh=True, gentle=True)
 
     cv = self.getConverter()
@@ -91,7 +252,6 @@ def convertTaskCustom(self):
         featureMeta=featureMeta,
         generateTf=True,
     )
-
 
 def getDirector(self):
     """Factory for the director function.
@@ -119,6 +279,7 @@ def getDirector(self):
         xml
         p
         milestone
+        sentence
         """.strip().split()
     )
 
@@ -154,55 +315,139 @@ def getDirector(self):
             Various pieces of data collected during walking
             and relevant for some next steps in the walk.
         xnode: object
-            An LXML element node.
+            An lxml element node.
         """
         tag = etree.QName(xnode.tag).localname
-        nestable = tag in {"w", "wg"}
 
-        atts = {etree.QName(k).localname: v for (k, v) in xnode.attrib.items()}
-        atts = {renameAtts.get(k, k): v for (k, v) in atts.items()}
+        if tag == "w":
+            tag = "word"
+        
+        nestable = tag in {"word", "wg"}
 
-        cur[XNEST].append((tag, atts))
+        cur[XNEST].append(tag)
 
-        (curNode, extraNode) = beforeChildren(cv, cur, xnode, tag, atts)
+        (curNode, extraNode) = beforeChildren(cv, cur, xnode, tag)
 
         if curNode is not None:
+            if extraNode is not None:
+                if curNode[0] == 'wg': #classification for word groups
+                    superNode = extraNode
+                else:
+                    superNode = curNode
+            else:
+                superNode = curNode
+        else:
+            superNode = curNode
+
+        if superNode is not None:
+            nest = superNode[0] in {"phrase", "clause", "word", "sentence", "group"}
+        else:
+            nest = False
+
+        #condition for nesting extraNode phrase and clause
+        if extraNode is not None:
+            nestablePhraseClause = extraNode[0] in {"phrase", "clause"}
+        else:
+            nestablePhraseClause = False
+
+        if curNode is not None:
+            #parent features for curNode word and wg
             if len(cur[TNEST]):
                 if nestable:
                     parentNode = cur[TNEST][-1]
                     cv.edge(curNode, parentNode, parent=None)
+            
+            #parent features for extraNode phrase and clause
+            if len(cur['extraParent']):
+                if nestablePhraseClause:
+                    parentNode = cur['extraParent'][-1]
+                    cv.edge(extraNode, parentNode, parent=None)
 
-            cur[TNEST].append(curNode)
+            #parent features for superNode phrase, clause, word, sentence and group
+            if len(cur['superParentNode']):
+                if nest:
+                    parentNode = cur['superParentNode'][-1]
+                    cv.edge(superNode, parentNode, parent=None)
 
+            cur[TNEST].append(curNode) #gleaning all the previous curNodes
+
+            #gleaning all the previous extraNode
+            if curNode[0] == 'wg':
+                Node = extraNode
+            else:
+                Node = curNode
+
+            cur['extraParent'].append(Node)
+
+            cur['superParentNode'].append(superNode) #gleaning all the previous superNodes
+            
             if len(cur[TSIB]):
                 if nestable:
                     siblings = cur[TSIB][-1]
-
                     nSiblings = len(siblings)
                     for (i, sib) in enumerate(siblings):
                         cv.edge(sib, curNode, sibling=nSiblings - i)
                     siblings.append(curNode)
 
+            if len(cur['extraSib']):
+                if nestablePhraseClause:
+                    siblings = cur['extraSib'][-1]
+                    nSiblings = len(siblings)
+                    for (i, sib) in enumerate(siblings):
+                        if curNode[0] == 'wg':
+                            Node = extraNode
+                        else:
+                            Node = curNode
+                        cv.edge(sib, Node, sibling=nSiblings - i)
+                    siblings.append(Node)
+
+            if len(cur['superSib']):
+                if nest:
+                    siblings = cur['superSib'][-1]
+                    nSiblings = len(siblings)
+                    for (i, sib) in enumerate(siblings):
+                        cv.edge(sib, superNode, sibling=nSiblings - i)
+                    siblings.append(superNode)
+
+            cur['superSib'].append([])        
+            
+            cur['extraSib'].append([])
+
             cur[TSIB].append([])
 
         for child in xnode.iterchildren(tag=etree.Element):
             walkNode(cv, cur, child)
-
-        afterChildren(cv, cur, xnode, tag, atts)
-
+        
+        afterChildren(cv, cur, xnode, tag)
+        
         if extraNode is not None:
             cv.terminate(extraNode)
-
+        
         if curNode is not None:
             if len(cur[TNEST]):
                 cur[TNEST].pop()
             if len(cur[TSIB]):
                 cur[TSIB].pop()
+        
+        if extraNode is not None:
+            if len(cur['extraParent']):
+                cur['extraParent'].pop()
+            if len(cur['extraSib']):
+                cur['extraSib'].pop()
+
+        if superNode is not None:
+            if len(cur['superParentNode']):
+                cur['superParentNode'].pop()
+            if len(cur['superSib']):
+                cur['superSib'].pop()
+        
+        if cur[TNEST] == []:
+            cv.terminate(curNode)
 
         cur[XNEST].pop()
-        afterTag(cv, cur, xnode, tag, atts)
+        afterTag(cv, cur, xnode, tag)
 
-    def beforeChildren(cv, cur, xnode, tag, atts):
+    def beforeChildren(cv, cur, xnode, tag):
         """Actions before dealing with the element's children.
 
         Parameters
@@ -213,11 +458,9 @@ def getDirector(self):
             Various pieces of data collected during walking
             and relevant for some next steps in the walk.
         xnode: object
-            An LXML element node.
+            An lxml element node.
         tag: string
-            The tag of the LXML node.
-        atts: dict
-            The attributes of the LXML node, possibly renamed.
+            The tag of the lxml node.
 
         Returns
         -------
@@ -227,21 +470,160 @@ def getDirector(self):
         if tag in PASS_THROUGH:
             return (None, None)
 
+        atts = {etree.QName(k).localname: v for (k, v) in xnode.attrib.items()}
+        atts = {renameAtts.get(k, k): v for (k, v) in atts.items()}
         for m in monoAtts:
             if atts.get(m, None) == "true":
                 atts[m] = 1
 
         if tag == "error":
             tag = "wg"
+        
+        if tag == "w":
+            tag = "word"
 
         (curNode, extraNode) = (None, None)
 
-        if tag == "w":
-            atts["text"] = xnode.text
+        extraType = None
+
+        if tag == "word":
+            atts["text"] = xnode.text #text shown in the conversor is provided by the text of the XML element
+            
+            unicode = atts.get('unicode')
+            after = atts.get('after')
+
+            # Definition of trailer
+            trailer = " "
+            
+            #Definition of punctuation feature
+            punctuation_matches = re.findall(punctuation_signs, after)
+            atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
+            trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
+
+            # Definition of before feature
+            if unicode[0] in {"—", "(", "["}:  # words that start with "—", "(", or "["
+                atts['before'] = unicode[0]
+                if unicode[0] == "—":
+                    atts['after'] = atts['trailer'] = " "  # solving bug with letters in the after feature
+                    atts['text'] = re.sub(r"[—]", "", unicode)
+                elif unicode[0] in {"(", "["}:
+                    atts['criticalsign'] = unicode[0]
+                    atts['text'] = re.sub(r"[(\[]", "", unicode)
+            else:
+                atts['before'] = None
+
+            if unicode[:2] == "[[":  # words that start with "[["
+                atts['criticalsign'] = atts['before'] = "[["
+                atts['text'] = re.sub(r"[\[\[]", "", unicode)
+
+            # Definition of after feature
+            if unicode[-1] == "—":  # words that end with "—"
+                if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"}:
+                    atts.update({'after': unicode[-2:], 'text': re.sub(r"[ ,.;·—()]", "", unicode)})
+                    punctuation_matches = re.findall(punctuation_signs, unicode)
+                    criticalsign_matches = re.findall(criticalsign_signs, unicode)
+                    atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
+                    atts['criticalsign'] = criticalsign_matches[0] if criticalsign_matches else None
+                    trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
+                else:
+                    atts.update({'after': unicode[-1], 'trailer': " "})
+
+            # words that end with two punctuation signs
+            if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"} and unicode[-1] not in {"ὁ", "ὃ", "ὅ"}:
+                atts.update({'after': unicode[-2:], 'text': re.sub(r"[ ,.;·—()]", "", unicode)})
+                punctuation_matches = re.findall(punctuation_signs, unicode)
+                criticalsign_matches = re.findall(criticalsign_signs, unicode)
+                atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
+                atts['criticalsign'] = criticalsign_matches[0] if criticalsign_matches else None
+                trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
+
+            # words "ὁ", "ὃ", "ὅ"
+            if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"} and unicode[-1] in {"ὁ", "ὃ", "ὅ"}:
+                atts['before'] = unicode[0]
+                punctuation_matches = re.findall(punctuation_signs, unicode)
+                criticalsign_matches = re.findall(criticalsign_signs, unicode)
+                atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
+                atts['criticalsign'] = criticalsign_matches[0] if criticalsign_matches else None
+                trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
+
+            # words that end with "]]"
+            if len(unicode) >= 3 and unicode[-2] in {"]"} and unicode[-3] not in {"ν"}:
+                atts.update({'after': unicode[-3:], 'criticalsign': "]]", 'punctuation': "."})
+
+            if len(unicode) >= 3 and unicode[-2] in {"]"} and unicode[-3] in {"ν"}:
+                atts.update({'after': unicode[-2:], 'criticalsign': "]]"})
+
+            # word that ends with "]"
+            if unicode == "Ἐφέσῳ]":
+                atts.update({'after': "]", 'criticalsign': "]"})
+
+            atts['trailer'] = trailer
+
+            # adding space after signs
+            after=atts.get('after')
+            if after != " ":
+                atts.update({'after': after + " "})
+
+            #updating lemma
+            lemma = atts.get('lemma')
+            txt = atts.get('text')
+            normalized = atts.get('normalized')
+
+            for character, replacement in character_substitution.items():
+                if character in lemma:
+                    lemma = lemma.replace(character, replacement)
+                    atts.update({'lemma': lemma})
+                if character in txt:
+                    txt = txt.replace(character, replacement)
+                    atts.update({'text': txt})
+                if character in unicode:
+                    unicode = unicode.replace(character, replacement)
+                    atts.update({'unicode': unicode})
+                if character in normalized:
+                    normalized = normalized.replace(character, replacement)
+                    atts.update({'normalized': normalized})
+
+            #dealing with variants in lemma
+            if "(I)" in lemma:
+                atts["variant"] = "1"
+                lemma = lemma[:-4]
+                atts.update({'lemma': lemma})
+            elif "(II)" in lemma:
+                atts["variant"] = "2"
+                lemma = lemma[:-5]
+                atts.update({'lemma': lemma})
+
+            #definition of transliteration and unaccent text
+            translit = unidecode(txt) #transliteration of the surface text
+            atts["translit"] = translit
+
+            lemmatranslit = unidecode(lemma) #transliteration of the word lemma
+            atts["lemmatranslit"] = lemmatranslit
+            
+            unaccent = ''.join(c for c in ud.normalize('NFKD', txt) if not ud.combining(c)) #unaccented of the surface text
+            atts["unaccent"] = unaccent
+
+            #definition of translated text (surface text that follows the Berean Study Bible)
+            trans = atts.get("gloss")
+            atts["trans"] = trans           
+
+            #updating gramatical person according to the BHSA nomenclature
+            person = atts.get("person")
+            atts['person'] = person
+            if person == 'first':
+                atts['person'] = 'p1'
+            elif person == 'second':
+                atts['person'] = 'p2'
+            elif person == 'third':
+                atts['person'] = 'p3'   
 
             ref = atts["ref"]
             (bRef, chRef, vRef, wRef) = SPLIT_REF.split(ref)
-            atts["book"] = bRef
+            if bRef in book_name:
+                cur["bookshort"] = bRef
+                thisBook = book_name[bRef]
+                atts["book"] = thisBook
+            atts["bookshort"] = cur["bookshort"]
             atts["chapter"] = chRef
             atts["verse"] = vRef
             atts["num"] = wRef
@@ -255,11 +637,11 @@ def getDirector(self):
 
                 curChapter = cv.node("chapter")
                 cur["chapter"] = curChapter
-                cv.feature(curChapter, chapter=thisChapterNum)
+                cv.feature(curChapter, chapter=thisChapterNum, book=thisBook) #book feature added to the chapter node
 
                 curVerse = cv.node("verse")
                 cur["verse"] = curVerse
-                cv.feature(curVerse, verse=thisVerseNum)
+                cv.feature(curVerse, verse=thisVerseNum, chapter=thisChapterNum, book=thisBook) #chapter and book features added to the verse node
 
             elif thisVerseNum != cv.get("verse", cur["verse"]):
                 if cur.get("verse", None) is not None:
@@ -267,7 +649,7 @@ def getDirector(self):
 
                 curVerse = cv.node("verse")
                 cur["verse"] = curVerse
-                cv.feature(curVerse, verse=thisVerseNum)
+                cv.feature(curVerse, verse=thisVerseNum, chapter=thisChapterNum, book=thisBook) #chapter and book features added to the verse node
 
             key = f"B{cur['bookNum']:>03}-C{chRef:>03}-V{vRef:>03}-W{wRef:>04}"
 
@@ -275,8 +657,61 @@ def getDirector(self):
                 if cur["sentNum"] == 1:
                     key = None
 
+            #definition of attributes for the phrases and subphrases
+            
+            #atts_phrase={} #saving only specific features in the features of the phrase
+            atts_phrase=atts #saving all features of the words in the features of the phrase
+
+            #obtaining class and role of word attributes for the phrase container
+            cls = atts.get("cls", None)
+            role = atts.get("role", None)
+
+            #defining the part-of-speach feature
+            if cls in pds:
+                atts["sp"] = pds[cls]
+            else:
+                atts["sp"] = cls
+
+            #generate phrase and subphrase containers for the words as an extra node
+            if role is not None:
+                extraType = "phrase"
+
+                cur["phraseNum"] += 1 #counting the number of the phrases
+                atts_phrase["num"] = cur["phraseNum"]
+            
+            elif cls == "conj":
+                extraType = "phrase"
+
+                cur["phraseNum"] += 1 #counting the number of the phrases
+                atts_phrase["num"] = cur["phraseNum"]
+            
+            else:
+                extraType = "subphrase"
+
+                cur["subphraseNum"] += 1 #counting the number of the subphrases
+                atts_phrase["num"] = cur["subphraseNum"]
+            
+            if cls in type_features:
+                atts_phrase["typ"] = type_features[cls]
+            
+            if role in role_features_word:
+                atts_phrase["function"] = role_features_word[role]
+            else: #when a phrase does not contain a function element it is classified as subphrase
+                extraType = "subphrase"
+
+                cur["subphraseNum"] += 1 #counting the number of the subphrases
+                atts_phrase["num"] = cur["subphraseNum"]
+            
+            if role == "apposition":
+                atts_phrase["rela"] = "Appo"
+
+            #save word attributes as features for the extra nodes
+            extraNode = cv.node(extraType)
+            if len(atts):
+                cv.feature(extraNode, **atts_phrase)
+
             curNode = cv.slot(key=key)
-            cv.feature(curNode, **atts)
+            cv.feature(curNode, **atts)  
 
             xId = atts.get("id", None)
             if xId is not None:
@@ -296,38 +731,327 @@ def getDirector(self):
                     cur["frameEdges"].append((curNode, xIds, label))
 
         else:
-            extraType = None
 
             if tag == "book":
                 cur["bookNum"] += 1
                 atts["num"] = cur["bookNum"]
-                atts["book"] = atts["id"]
+                atts["bookshort"] = atts["id"] #defining the attribute bookshort
+                cur["bookshort"] = atts["id"]
+                if atts["id"] in book_name: #including the attribute book for the whole name of the book
+                    atts["book"] = book_name[atts["id"]]
+                    cur['book'] = atts['book']
                 del atts["id"]
+                
+            elif tag == "wg" and len(atts): #consider only wg tag with attributes
+                cls = atts.get("cls", None)
+                role = atts.get("role", None)
+                typems = atts.get("typems", None)
+                rule = atts.get("rule", None)
+                cltype = atts.get("cltype", None)
+                crule = atts.get("crule", None)
+                clausetype = atts.get("clauseType", None)
 
-            elif tag == "sentence":
+                wg_ref = xnode.xpath("w[1]/@ref")
+                if len(wg_ref):
+                    (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                    if bRef in book_name:
+                        atts["book"] = book_name[bRef]
+                    atts["bookshort"] = bRef
+                    atts["chapter"] = chRef
+                    atts["verse"] = vRef
+                
+                #fixing features with capital letters in the middle of the name of the features
+                atts["clauseType"] = atts.get("clauseType")
+                if atts["clauseType"] is not None:
+                    atts["clausetype"] = atts["clauseType"]
+                    del atts["clauseType"]
+                atts["nodeId"] = atts.get("nodeId")
+                if atts["nodeId"] is not None:
+                    atts["nodeid"] = atts["nodeId"]
+                    del atts["nodeId"]
+
+                if cls is not None:
+                    if cls == "cl":
+                        extraType = "clause" #generate clause container from the wg tag
+
+                        if rule is not None and any(keyword in rule for keyword in ["ADV", "IO", "O", "O2", "S", "VC"]):
+                            std= "|".join(r'\b' + re.escape(keey) + r'\b' for keey in clause_features.keys())
+                            subs = lambda match: clause_features[match.group(0)]
+                            atts["function"] = re.sub(std, subs, rule)
+                        
+                        cur["clNum"] += 1 #counting the number of the clauses
+                        atts["num"] = cur["clNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+                            
+                    else:
+                        extraType = "phrase" #generate phrase container for the words within the wg tag
+                        
+                        cur["phraseNum"] += 1 #counting the number of the phrases
+                        atts["num"] = cur["phraseNum"]
+                        
+                        if cls in type_features:
+                            atts["typ"] = type_features[cls]
+                        
+                        if role in role_features_wg:
+                            atts["function"] = role_features_wg[role]
+                        else: #when a phrase does not contain a function element it is classified as subphrase
+                            extraType = "subphrase"
+
+                            cur["subphraseNum"] += 1 #counting the number of the subphrases
+                            atts["num"] = cur["subphraseNum"]
+                        
+                        if role == "apposition":
+                            atts["rela"] = "Appo"
+
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+
+                else:
+                    if rule == "NPofNP":
+                        extraType = "phrase"
+
+                        cur["phraseNum"] += 1 #counting the number of the phrases
+                        atts["num"] = cur["phraseNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+
+                    #conditions for the final verbal phrases (participle and infinitive)
+                    elif rule == 'Conj2VP' and role == 'v':
+                        extraType = 'clause'
+                        
+                        for mood, function in final_verbal_phrases.items():
+                            wg_elements = xnode.xpath(f"wg/w[@mood='{mood}']")
+                            if wg_elements:
+                                atts['function'] = function
+                        
+                        cur["clNum"] += 1
+                        atts["num"] = cur["clNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+
+                    elif role in {'tail', 'ellipsis', 'topic', 'aux'}:
+                        extraType = 'clause'
+
+                        if role == 'aux':
+                            atts["typ"] = "Voct"
+                        
+                        cur["clNum"] += 1
+                        atts["num"] = cur["clNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+
+                    #generate clause container for specific attributes
+                    elif clausetype == "nominalized" or cltype is not None or crule is not None:
+                        extraType = "clause"
+
+                        if rule is not None and any(keyword in rule for keyword in ["ADV", "IO", "O", "O2", "S", "VC"]):
+                            std= "|".join(r'\b' + re.escape(keey) + r'\b' for keey in clause_features.keys())
+                            subs = lambda match: clause_features[match.group(0)]
+                            atts["function"] = re.sub(std, subs, rule)
+                                                                        
+                        cur["clNum"] += 1
+                        atts["num"] = cur["clNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+
+                    #generate sentence container for specific attributes
+                    elif typems == "wrapper-clause-scope" or typems == "modifier-clause-scope":
+                        
+                        wg_elements = xnode.xpath("//wg[not(parent::wg)]")
+                        if wg_elements:
+                            extraType = "clause"
+
+                            cur["clNum"] += 1 
+                            atts["num"] = cur["clNum"]
+
+                        else:
+                            extraType = "sentence"
+
+                            cur["sentNum"] += 1 
+                            atts["num"] = cur["sentNum"]
+
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+                        
+                    elif rule in cl_dictionary:
+
+                        wg_elements = xnode.xpath("//wg[not(parent::wg)]")
+                        if wg_elements:
+                            extraType = "clause"
+
+                            cur["clNum"] += 1 
+                            atts["num"] = cur["clNum"]
+
+                        else:
+                            extraType = "sentence"
+
+                            cur["sentNum"] += 1 
+                            atts["num"] = cur["sentNum"]
+
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+                        
+                    elif rule is not None and len(atts) == 1:
+                        
+                        wg_elements = xnode.xpath("//wg[not(parent::wg)]")
+                        if wg_elements:
+                            extraType = "clause"
+
+                            cur["clNum"] += 1 
+                            atts["num"] = cur["clNum"]
+
+                        else:
+                            extraType = "sentence"
+
+                            cur["sentNum"] += 1 
+                            atts["num"] = cur["sentNum"]
+
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+                        
+                    #generate group container for specific attributes
+                    elif typems == "conjuncted-wg":
+                        extraType = "group"
+                        atts["typ"] = "conjuncted"
+
+                        cur["groupNum"] += 1
+                        atts["num"] = cur["groupNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+                        
+                    elif typems == "apposition-group":
+                        extraType = "group"
+                        atts["typ"] = "apposition"
+
+                        cur["groupNum"] += 1
+                        atts["num"] = cur["groupNum"]
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+                    
+                    else:
+                        extraType = "phrase" #generate phrase container for the words that the clause feature is None
+                        
+                        cur["phraseNum"] += 1 #counting the number of the phrases
+                        atts["num"] = cur["phraseNum"]
+
+                        if role in role_features_wg:
+                            atts["function"] = role_features_wg[role]
+
+                        else: #when a phrase does not contain a function element it is classified as subphrase
+                            extraType = "subphrase"
+
+                            cur["subphraseNum"] += 1 #counting the number of the subphrases
+                            atts["num"] = cur["subphraseNum"]
+
+                        if role == "apposition":
+                            atts["rela"] = "Appo"
+                        
+                        wg_ref = xnode.xpath("wg//w[1]/@ref")
+                        if len(wg_ref):
+                            (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                            if bRef in book_name:
+                                atts["book"] = book_name[bRef]
+                            atts["bookshort"] = bRef
+                            atts["chapter"] = chRef
+                            atts["verse"] = vRef
+            
+            else:
+                return (None, None) #consider only wg tag with attributes
+            
+            if len(atts):
+                curNode = cv.node(tag)
+                cv.feature(curNode, **atts)
+
+            if len(cur['superParentNode']) == 1 and extraType != "sentence": #defining the sentence container at the beginning of the root
+                extraType = "sentence"
+
                 cur["sentNum"] += 1
                 atts["num"] = cur["sentNum"]
 
-            elif tag == "wg":
-                cls = atts.get("cls", None)
-                if cls is not None:
-                    if cls == "cl":
-                        extraType = "clause"
-                    else:
-                        extraType = "phrase"
-
-            curNode = cv.node(tag)
-            if len(atts):
-                cv.feature(curNode, **atts)
+                wg_ref = xnode.xpath("wg//w[1]/@ref")
+                if len(wg_ref):
+                    (bRef, chRef, vRef, wRef) = SPLIT_REF.split(wg_ref[0])
+                    if bRef in book_name:
+                        atts["book"] = book_name[bRef]
+                    atts["bookshort"] = bRef
+                    atts["chapter"] = chRef
+                    atts["verse"] = vRef
 
             if extraType is not None:
                 extraNode = cv.node(extraType)
                 if len(atts):
                     cv.feature(extraNode, **atts)
-
+            
         return (curNode, extraNode)
 
-    def afterChildren(cv, cur, xnode, tag, atts):
+    def afterChildren(cv, cur, xnode, tag):
         """Node actions after dealing with the children, but before the end tag.
 
         Here we make sure that the newline elements will get their last slot
@@ -341,14 +1065,15 @@ def getDirector(self):
             Various pieces of data collected during walking
             and relevant for some next steps in the walk.
         xnode: object
-            An LXML element node.
+            An lxml element node.
         tag: string
-            The tag of the LXML node.
-        atts: dict
-            The attributes of the LXML node, possibly renamed.
+            The tag of the lxml node.
         """
         if tag == "error":
             tag = "wg"
+        
+        if tag == "w":
+            tag == "word"
 
         if tag not in PASS_THROUGH:
             if tag == "book":
@@ -357,12 +1082,13 @@ def getDirector(self):
 
             if len(cur[TNEST]):
                 curNode = cur[TNEST][-1]
-                cv.terminate(curNode)
-
-    def afterTag(cv, cur, xnode, tag, atts):
+                if curNode[0] != 'book':
+                    cv.terminate(curNode)
+                
+    def afterTag(cv, cur, xnode, tag):
         """Node actions after dealing with the children and after the end tag.
 
-        This is the place where we process the `tail` of an LXML node: the
+        This is the place where we proces the `tail` of an lxml node: the
         text material after the element and before the next open/close
         tag of any element.
 
@@ -374,11 +1100,9 @@ def getDirector(self):
             Various pieces of data collected during walking
             and relevant for some next steps in the walk.
         xnode: object
-            An LXML element node.
+            An lxml element node.
         tag: string
-            The tag of the LXML node.
-        atts: dict
-            The attributes of the LXML node, possibly renamed.
+            The tag of the lxml node.
         """
         pass
 
@@ -415,14 +1139,24 @@ def getDirector(self):
                     tree = etree.parse(text, parser)
                     root = tree.getroot()
                     cur[XNEST] = []
-                    cur[TNEST] = []
-                    cur[TSIB] = []
+                    cur[TNEST] = [] #define dictionary that carries all the previous curNodes
+                    cur[TSIB] = [] #define dictionary that carries all the siblings with curNodes
+                    cur['book'] = None
                     cur["chapter"] = None
                     cur["verse"] = None
-                    cur["sentNum"] = 0
+                    cur["bookshort"] = None
+                    cur["sentNum"] = 0 #define number of the sentence
+                    cur["groupNum"] = 0 #define number of the group
+                    cur["clNum"] = 0 #define number of the clause
+                    cur["phraseNum"] = 0 #define number of the phrase
+                    cur["subphraseNum"] = 0 #define number of the subphrase
                     cur["xIdIndex"] = {}
                     cur["subjrefEdges"] = []
                     cur["frameEdges"] = []
+                    cur["extraParent"] = [] #define dictionary that carries all the previous extraNodes
+                    cur["extraSib"] = [] #define dictionary that carries all the siblings with extraNodes
+                    cur["superParentNode"] = [] #define dictionary that carries all the previous superNodes
+                    cur['superSib'] = [] #define dictionary that carries all the siblings with superNodes
                     walkNode(cv, cur, root)
 
                 xIdIndex = cur["xIdIndex"]
@@ -477,6 +1211,12 @@ def getDirector(self):
                     fName,
                     description=f"this is XML attribute {fName}",
                     valueType="str",
+                )
+            if fName == "sibling":
+               cv.meta(
+                    fName,
+                    description=f"this is XML attribute {fName}",
+                    valueType="int",
                 )
 
         if verbose == 1:

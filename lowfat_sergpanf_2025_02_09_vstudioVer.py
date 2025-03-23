@@ -15,11 +15,7 @@ from tf.convert.helpers import XNEST, TNEST, TSIB
 # once without and once with slot reordering
 demoMode = False
 
-book_name = {'MAT': 'Matthew', 'MRK': 'Mark', 'LUK': 'Luke', 'JHN': 'John', 'ACT': 'Acts', 'ROM': 'Romans', '1CO': 'I_Corinthians',
-            '2CO': 'II_Corinthians', 'GAL': 'Galatians', 'EPH': 'Ephesians', 'PHP': 'Philippians', 'COL': 'Colossians',
-            '1TH': 'I_Thessalonians', '2TH': 'II_Thessalonians', '1TI': 'I_Timothy', '2TI': 'II_Timothy', 'TIT': 'Titus', 'PHM': 'Philemon',
-            'HEB': 'Hebrews', 'JAS': 'James', '1PE': 'I_Peter','2PE': 'II_Peter', '1JN': 'I_John', '2JN': 'II_John', '3JN': 'III_John',
-            'JUD': 'Jude', 'REV': 'Revelation'}
+book_name = {'GEN': 'Genesis'}
 
 type_features = {"adjp": "AdjP",
                  "advp": "AdvP",
@@ -415,7 +411,9 @@ def getDirector(self):
 
             cur[TSIB].append([])
 
-## sp_: crash takes place when entering <w> tag (see the "cur" element)
+        #debugging using the line number of the XML file
+        #print('\r' + f"xnode.sourceline: {xnode.sourceline}" + '\r')
+        
         for child in xnode.iterchildren(tag=etree.Element):
             walkNode(cv, cur, child)
         
@@ -502,7 +500,9 @@ def getDirector(self):
             trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
 
             # Definition of before feature
-            if unicode[0] in {"—", "(", "["}:  # words that start with "—", "(", or "["
+            atts['before'] = None
+            # For Hebrew words, len(unicode) can be 0 in cases where def. article is assimilated.
+            if len(unicode) > 0 and unicode[0] in {"—", "(", "["}:  # words that start with "—", "(", or "["
                 atts['before'] = unicode[0]
                 if unicode[0] == "—":
                     atts['after'] = atts['trailer'] = " "  # solving bug with letters in the after feature
@@ -510,15 +510,13 @@ def getDirector(self):
                 elif unicode[0] in {"(", "["}:
                     atts['criticalsign'] = unicode[0]
                     atts['text'] = re.sub(r"[(\[]", "", unicode)
-            else:
-                atts['before'] = None
 
             if unicode[:2] == "[[":  # words that start with "[["
                 atts['criticalsign'] = atts['before'] = "[["
                 atts['text'] = re.sub(r"[\[\[]", "", unicode)
 
             # Definition of after feature
-            if unicode[-1] == "—":  # words that end with "—"
+            if len(unicode) > 0 and unicode[-1] == "—":  # words that end with "—"
                 if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"}:
                     atts.update({'after': unicode[-2:], 'text': re.sub(r"[ ,.;·—()]", "", unicode)})
                     punctuation_matches = re.findall(punctuation_signs, unicode)
@@ -566,8 +564,8 @@ def getDirector(self):
                 atts.update({'after': after + " "})
 
             #updating lemma
-            lemma = atts.get('lemma')
-            txt = atts.get('text')
+            lemma = atts.get('lemma') or ''
+            txt = atts.get('text') or ''
             normalized = atts.get('normalized') or '' # fixed
 
             for character, replacement in character_substitution.items():

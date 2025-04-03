@@ -17,6 +17,8 @@ demoMode = False
 
 book_name = {'GEN': 'Genesis'}
 
+OT_NT_context = 'OT'; ## possible values: 'OT';'NT'
+
 type_features = {"adjp": "AdjP",
                  "advp": "AdvP",
                  "np": "NP",
@@ -1159,27 +1161,30 @@ def getDirector(self):
                     walkNode(cv, cur, root)
 
                 xIdIndex = cur["xIdIndex"]
-                noXId = "n00000000000"
+                ot_nt_prefix = "o" if (OT_NT_context == 'OT') else "n"
+                noXId = ot_nt_prefix + "00000000000"
 
-                for (fromNode, xIds) in cur["subjrefEdges"]:
-                    for xId in xIds.split(";"):
-                        toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
-                        if toNode is None:
-                            brokenRefs.setdefault("subjref", {}).setdefault(
-                                f"{xmlFolder}/{xmlFile}", set()
-                            ).add(xId)
-                        else:
-                            cv.edge(fromNode, toNode, subjref=None)
+                ## possible start comment here to avoid subjrefEdges AND frameRefs
+                # for (fromNode, xIds) in cur["subjrefEdges"]:
+                #     for xId in xIds.split(";"):
+                #         toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
+                #         if toNode is None:
+                #             brokenRefs.setdefault("subjref", {}).setdefault(
+                #                 f"{xmlFolder}/{xmlFile}", set()
+                #             ).add(xId)
+                #         else:
+                #             cv.edge(fromNode, toNode, subjref=None)
 
-                for (fromNode, xIds, label) in cur["frameEdges"]:
-                    for xId in xIds.split(";"):
-                        toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
-                        if toNode is None:
-                            brokenRefs.setdefault("frame", {}).setdefault(
-                                f"{xmlFolder}/{xmlFile}", set()
-                            ).add(xId)
-                        else:
-                            cv.edge(fromNode, toNode, frame=label)
+                # for (fromNode, xIds, label) in cur["frameEdges"]:
+                #     for xId in xIds.split(";"):
+                #         toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
+                #         if toNode is None:
+                #             brokenRefs.setdefault("frame", {}).setdefault(
+                #                 f"{xmlFolder}/{xmlFile}", set()
+                #             ).add(xId)
+                #         else:
+                #             cv.edge(fromNode, toNode, frame=label)
+            ## possible comment end to avoid subjref AND frameRefs
 
             console("")
             if len(brokenRefs):

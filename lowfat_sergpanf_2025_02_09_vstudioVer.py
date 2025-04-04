@@ -130,7 +130,7 @@ def convertTaskCustom(self):
 
     slotType = "word"
     otext = {
-        "fmt:text-orig-full": "{before}{text}{after}",
+        "fmt:text-orig-full": "{text}",
         "fmt:text-orig-plain": "{text}{trailer}",
         "fmt:text-translit-plain": "{translit}{trailer}",
         "fmt:text-unaccent-plain": "{unaccent}{trailer}",
@@ -153,7 +153,6 @@ def convertTaskCustom(self):
         "sibling",
     }
     featureMeta = (
-        ("after", "material after the end of the word"),
         ("appositioncontainer", "1 if it is an apposition container"),
         ("articular", "1 if the sentence, group, clause, phrase or wg has an article"),
         ("book", "book name (full name)"),
@@ -491,79 +490,10 @@ def getDirector(self):
             atts["text"] = xnode.text #text shown in the conversor is provided by the text of the XML element
             
             unicode = atts.get('unicode')
-            after = atts.get('after') or ''
 
             # Definition of trailer
             trailer = " "
-            
-            #Definition of punctuation feature
-            punctuation_matches = re.findall(punctuation_signs, after)
-            atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
-            trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
-
-            # Definition of before feature
-            atts['before'] = None
-            # For Hebrew words, len(unicode) can be 0 in cases where def. article is assimilated.
-            if len(unicode) > 0 and unicode[0] in {"—", "(", "["}:  # words that start with "—", "(", or "["
-                atts['before'] = unicode[0]
-                if unicode[0] == "—":
-                    atts['after'] = atts['trailer'] = " "  # solving bug with letters in the after feature
-                    atts['text'] = re.sub(r"[—]", "", unicode)
-                elif unicode[0] in {"(", "["}:
-                    atts['criticalsign'] = unicode[0]
-                    atts['text'] = re.sub(r"[(\[]", "", unicode)
-
-            if unicode[:2] == "[[":  # words that start with "[["
-                atts['criticalsign'] = atts['before'] = "[["
-                atts['text'] = re.sub(r"[\[\[]", "", unicode)
-
-            # Definition of after feature
-            if len(unicode) > 0 and unicode[-1] == "—":  # words that end with "—"
-                if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"}:
-                    atts.update({'after': unicode[-2:], 'text': re.sub(r"[ ,.;·—()]", "", unicode)})
-                    punctuation_matches = re.findall(punctuation_signs, unicode)
-                    criticalsign_matches = re.findall(criticalsign_signs, unicode)
-                    atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
-                    atts['criticalsign'] = criticalsign_matches[0] if criticalsign_matches else None
-                    trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
-                else:
-                    atts.update({'after': unicode[-1], 'trailer': " "})
-
-            # words that end with two punctuation signs
-            if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"} and unicode[-1] not in {"ὁ", "ὃ", "ὅ"}:
-                atts.update({'after': unicode[-2:], 'text': re.sub(r"[ ,.;·—()]", "", unicode)})
-                punctuation_matches = re.findall(punctuation_signs, unicode)
-                criticalsign_matches = re.findall(criticalsign_signs, unicode)
-                atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
-                atts['criticalsign'] = criticalsign_matches[0] if criticalsign_matches else None
-                trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
-
-            # words "ὁ", "ὃ", "ὅ"
-            if len(unicode) >= 2 and unicode[-2] in {" ", ",", ".", ";", "·", "—", "(", ")"} and unicode[-1] in {"ὁ", "ὃ", "ὅ"}:
-                atts['before'] = unicode[0]
-                punctuation_matches = re.findall(punctuation_signs, unicode)
-                criticalsign_matches = re.findall(criticalsign_signs, unicode)
-                atts['punctuation'] = punctuation_matches[0] if punctuation_matches else None
-                atts['criticalsign'] = criticalsign_matches[0] if criticalsign_matches else None
-                trailer = punctuation_matches[0] + " " if punctuation_matches else trailer
-
-            # words that end with "]]"
-            if len(unicode) >= 3 and unicode[-2] in {"]"} and unicode[-3] not in {"ν"}:
-                atts.update({'after': unicode[-3:], 'criticalsign': "]]", 'punctuation': "."})
-
-            if len(unicode) >= 3 and unicode[-2] in {"]"} and unicode[-3] in {"ν"}:
-                atts.update({'after': unicode[-2:], 'criticalsign': "]]"})
-
-            # word that ends with "]"
-            if unicode == "Ἐφέσῳ]":
-                atts.update({'after': "]", 'criticalsign': "]"})
-
             atts['trailer'] = trailer
-
-            # adding space after signs
-            #after=atts.get('after') # after has already been defined previously (with a fixed line now)
-            if after != " " and after != "" : # added after != "", since in the LXX this can happen
-                atts.update({'after': after + " "})
 
             #updating lemma
             lemma = atts.get('lemma') or ''

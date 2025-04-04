@@ -1,15 +1,25 @@
 # %%
-%load_ext autoreload
-%autoreload 2
+#%load_ext autoreload
+#%autoreload 2 
 
+import sys
+sys.path.append('h:\\My Drive\\eduAndrews\\_WORK\\TF_Projects_VS\\TF.Convert.XML_BackEnd\\sergpanf\\LXX-Link')
+# Deduplicate sys.path, preserving order
+sys.path = list(dict.fromkeys(sys.path))
+#print(sys.path)
+import importlib
+module_name = "lowfat_sergpanf_2025_02_09_vstudioVer"
+module = importlib.import_module(module_name)
+importlib.reload(module)
 
-# 
+#  
 from tf.convert.xml import XML
 from lowfat_sergpanf_2025_02_09_vstudioVer import convertTaskCustom
 #from tf.advanced.helpers import dm
 #from tf.advanced.zipdata import zipAll, addCheckout
 #from tf.app import use
 #color = {1: "#47edff", 2: "#81ee93", 3: "#eaff47", 4: "#ffcb47", 5: "#ffa647", 6: "#ff7b47", 7: "#ff479d", 8: "#ff4747", 9: "#477eff", 10: "#a647ff"}
+
 
 # 
 keywordAtts = set(
@@ -64,7 +74,7 @@ X = XML(
     trimAtts=trimAtts,
     renameAtts=renameAtts,
     verbose=1,
-    xml="2025-02-05",
+    xml="2025-04-04",
     tf="0.0.1"
 )
 

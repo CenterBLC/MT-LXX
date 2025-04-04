@@ -1,0 +1,6 @@
+OK  1 namespace for chapter          :     1x None
+OK  1 namespace for milestone        :    31x None
+OK  1 namespace for p                :    31x None
+OK  1 namespace for sentence         :    31x None
+OK  1 namespace for w                :   701x None
+OK  1 namespace for wg               :   506x None

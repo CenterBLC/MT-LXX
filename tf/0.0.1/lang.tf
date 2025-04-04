@@ -1,0 +1,1421 @@
+@node
+@author=LXX Writers
+@converterSourceLocation=https://github.com/sergeypanfilov[tobecreated]/tflxx[tobecreated]/tree/main/programs
+@converterVersion=1.0.0 (February 21, 2025)
+@converters=Sergey Panfilov, Saulo de Oliveira Cantanhêde, Tony Jurg, Dirk Roorda
+@dataSource=MACULA Greek Linguistic Datasets, available at https://github.com/Clear-Bible/macula-hebrew/blob/main/WLC/lowfat
+@dataSourceFormat=XML lowfat tree data
+@dataSourceLocation=https://github.com/sergeypanfilov[tobecreated]/tflxx[tobecreated]/tree/main/xml/2025-02-05/mt-sync-lxx
+@description=language the text is in
+@editors=
+@institute=ETCBC (Eep Talstra Centre for Bible and Computer) at Vrije Universiteit Amsterdam, CBLC (Center of Biblical Languages and Computing) at Andrews University
+@title=LXX [...]
+@valueType=str
+@version=0.0.1
+@xmlSourceDate=April 9, 2024
+@xmlVersion=2025-02-05
+@writtenBy=Text-Fabric
+@dateWritten=2025-04-04T14:00:32+00:00Z
+
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+759	H
+H
+763	H
+765	H
+768	H
+H
+H
+H
+H
+H
+H
+H
+H
+778	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+791	H
+H
+H
+H
+H
+797	H
+H
+H
+801	H
+804	H
+H
+H
+H
+H
+H
+H
+H
+H
+814	H
+H
+H
+818	H
+820	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+835	H
+H
+H
+H
+841	H
+H
+H
+846	H
+H
+H
+852	H
+H
+H
+H
+H
+H
+H
+860	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+873	H
+875	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+887	H
+H
+H
+892	H
+H
+H
+H
+897	H
+899	H
+H
+H
+H
+904	H
+H
+H
+H
+H
+911	H
+H
+H
+H
+H
+917	H
+H
+H
+922	H
+H
+H
+H
+927	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+939	H
+942	H
+944	H
+946	H
+H
+H
+H
+H
+H
+953	H
+H
+H
+H
+H
+H
+H
+961	H
+H
+966	H
+H
+H
+H
+973	H
+H
+H
+H
+978	H
+980	H
+H
+H
+H
+1069	H
+H
+1072	H
+1074	H
+H
+H
+1078	H
+1080	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+1091	H
+H
+H
+H
+H
+1097	H
+1099	H
+1101	H
+H
+H
+H
+H
+H
+1108	H
+H
+H
+H
+1114	H
+1116	H
+H
+H
+1120	H
+1122	H
+H
+H
+1126	H
+1128	H
+H
+H
+1132	H
+1134	H
+H
+H
+H
+H
+H
+H
+1142	H
+1144	H
+1146	H
+H
+H
+1151	H
+H
+1154	H
+H
+H
+H
+1159	H
+H
+H
+1164	H
+1166	H
+1168	H
+1170	H
+H
+1173	H
+1175	H
+1177	H
+H
+H
+1181	H
+1183	H
+1185	H
+1187	H
+H
+1190	H
+1192	H
+1194	H
+H
+H
+H
+1199	H
+1201	H
+H
+H
+H
+H
+H
+H
+H
+H
+1212	H
+H
+1215	H
+H
+1218	H
+1220	H
+H
+H
+H
+H
+H
+H
+1228	H
+1230	H
+H
+H
+1234	H
+1236	H
+1238	H
+H
+H
+H
+H
+H
+H
+H
+1247	H
+1252	H
+H
+1256	H
+1258	H
+H
+1261	H
+H
+H
+H
+H
+1267	H
+1269	H
+H
+H
+H
+H
+H
+H
+1277	H
+1280	H
+1282	H
+H
+H
+1286	H
+1288	H
+1290	H
+H
+H
+H
+H
+1296	H
+1298	H
+H
+H
+H
+H
+H
+H
+H
+H
+1308	H
+1310	H
+1312	H
+H
+1315	H
+1318	H
+1320	H
+H
+H
+1324	H
+1326	H
+H
+H
+1331	H
+H
+H
+1335	H
+H
+H
+1339	H
+1341	H
+H
+H
+H
+1346	H
+H
+1349	H
+1351	H
+1353	H
+H
+1356	H
+1358	H
+1360	H
+H
+H
+H
+1366	H
+1368	H
+1370	H
+1372	H
+1374	H
+H
+1378	H
+1380	H
+1383	H
+1385	H
+H
+1388	H
+1390	H
+1392	H
+H
+H
+1396	H
+1398	H
+1401	H
+1403	H
+H
+1406	H
+1408	H
+1410	H
+H
+H
+1414	H
+1416	H
+H
+H
+H
+H
+1422	H
+1424	H
+1426	H
+H
+1429	H
+1431	H
+1433	H
+H
+H
+1437	H
+1440	H
+1442	H
+H
+H
+1446	H
+1448	H
+H
+H
+1452	H
+1455	H
+1457	H
+H
+H
+1461	H
+1463	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+1476	H
+H
+H
+1480	H
+1482	H
+H
+1485	H
+1487	H
+1489	H
+1491	H
+H
+H
+1495	H
+1497	H
+1499	H
+1501	H
+H
+H
+1505	H
+1507	H
+1512	H
+1514	H
+H
+1517	H
+H
+1520	H
+H
+H
+1524	H
+1526	H
+H
+H
+1530	H
+1532	H
+1535	H
+H
+1538	H
+1540	H
+H
+H
+H
+H
+H
+H
+1548	H
+H
+H
+H
+1553	H
+H
+1556	H
+1558	H
+H
+H
+H
+H
+1564	H
+1566	H
+H
+H
+H
+H
+H
+H
+H
+H
+1577	H
+H
+1580	H
+1582	H
+H
+1586	H
+H
+H
+H
+1591	H
+H
+1594	H
+1596	H
+H
+H
+H
+1601	H
+1604	H
+1606	H
+H
+1609	H
+1611	H
+H
+H
+1615	H
+1617	H
+1619	H
+1621	H
+1623	H
+H
+H
+1627	H
+1629	H
+1632	H
+1634	H
+H
+1637	H
+1639	H
+H
+H
+H
+H
+1645	H
+1647	H
+H
+1650	H
+1652	H
+H
+H
+1657	H
+1659	H
+1661	H
+H
+H
+1665	H
+1667	H
+1669	H
+H
+H
+1673	H
+1675	H
+H
+H
+1679	H
+1681	H
+1683	H
+H
+H
+1687	H
+1689	H
+1691	H
+1693	H
+1695	H
+1698	H
+1700	H
+H
+H
+H
+1705	H
+H
+1708	H
+1710	H
+H
+1713	H
+1715	H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+H
+1729	H
+H
+H
+H
+H
+1735	H
+H
+H
+H
+1741	H
+1743	H
+1745	H
+H
+H
+1749	H
+1751	H
+1753	H
+H
+H
+1757	H
+1759	H
+1761	H
+1763	H
+1766	H
+1768	H
+H
+H
+H
+1773	H
+H
+1776	H
+1778	H
+1781	H
+1784	H
+H
+1787	H
+1789	H
+1791	H
+H
+H
+1795	H
+1797	H
+1799	H
+1801	H
+1803	H
+H
+H
+1807	H
+H
+1811	H
+H
+1814	H
+H
+H
+1819	H
+1821	H
+1823	H
+1825	H
+H
+H
+1829	H
+1831	H
+1833	H
+1835	H
+H
+H
+1839	H
+1842	H
+1845	H
+1847	H
+H
+1850	H
+H
+H
+H
+H
+H
+1857	H
+1859	H
+H
+1862	H
+H
+H
+H
+H
+1868	H
+1870	H
+H
+H
+H
+H
+H
+H
+H
+1879	H
+H

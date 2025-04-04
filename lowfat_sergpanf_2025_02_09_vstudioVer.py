@@ -82,6 +82,8 @@ final_verbal_phrases = {'participle': 'PreC',
                         'imperative': 'Pred',
                         'optative': 'Pred'}
 
+bookFakeNodeCur = ''
+
 def convertTaskCustom(self):
     """Implementation of the "convert" task.
 
@@ -315,6 +317,16 @@ def getDirector(self):
             An lxml element node.
         """
         tag = etree.QName(xnode.tag).localname
+
+        global bookFakeNodeCur
+        if (tag == 'chapter'):
+            bookShort = (xnode.get('id') or '').split(' ')[0]
+            if (bookFakeNodeCur != bookShort):
+                bookFakeNodeCur = bookShort
+                new_book = etree.Element('book', {'id': bookShort})
+                new_book.append(xnode)
+                walkNode(cv, cur, new_book)
+                return
 
         if tag == "w":
             tag = "word"

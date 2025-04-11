@@ -2,8 +2,10 @@
 #%load_ext autoreload
 #%autoreload 2 
 
+import os
 import sys
-sys.path.append('h:\\My Drive\\eduAndrews\\_WORK\\TF_Projects_VS\\TF.Convert.XML_BackEnd\\sergpanf\\LXX-Link')
+current_working_dir = os.getcwd()
+sys.path.append(current_working_dir)
 # Deduplicate sys.path, preserving order
 sys.path = list(dict.fromkeys(sys.path))
 #print(sys.path)
@@ -78,13 +80,8 @@ X = XML(
     tf="0.0.1"
 )
 
-
 X.task(check=True)
-
 X.task(convert=True)
-
+X.task(load=True)
+X.task(app=True)
 # %%
-#X.task(load=True)
-
-# # %%
-#X.task(app=True)

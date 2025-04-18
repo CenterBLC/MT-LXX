@@ -76,8 +76,8 @@ X = XML(
     trimAtts=trimAtts,
     renameAtts=renameAtts,
     verbose=1,
-    xml="2025-04-17",
-    tf="0.0.3"
+    xml="2025-04-18",
+    tf="0.0.6"
 )
 
 X.task(check=True)

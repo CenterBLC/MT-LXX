@@ -15,7 +15,54 @@ from tf.convert.helpers import XNEST, TNEST, TSIB
 # once without and once with slot reordering
 demoMode = False
 
-book_name = {'GEN': 'Genesis'}
+book_name = {'GEN': 'Genesis'
+             , 'EXO': 'Exodus'
+             , 'LEV': 'Leviticus'
+             , 'NUM': 'Numbers'
+             , 'DEU': 'Deuteronomy'
+
+# Historical Books
+             , 'JOS': 'Joshua'
+             , 'JDG': 'Judges'
+             , 'RUT': 'Ruth'
+             , '1SA': '1 Samuel'
+             , '2SA': '2 Samuel'
+             , '1KI': '1 Kings'
+             , '2KI': '2 Kings'
+             , '1CH': '1 Chronicles'
+             , '2CH': '2 Chronicles'
+             , 'NEH': 'Nehemiah'
+             , 'EZR': 'Ezra'
+             , 'EST': 'Esther'
+
+# Poetry and Wisdom
+             , 'JOB': 'Job'
+             , 'PSA': 'Psalms'
+             , 'PRO': 'Proverbs'
+             , 'ECC': 'Ecclesiastes'
+             , 'SNG': 'Song of Solomon'
+
+# Major Prophets
+             , 'ISA': 'Isaiah'
+             , 'JER': 'Jeremiah'
+             , 'LAM': 'Lamentations'
+             , 'EZK': 'Ezekiel'
+             , 'DAN': 'Daniel'
+
+# Minor Prophets
+             , 'HOS': 'Hosea'
+             , 'JOL': 'Joel'
+             , 'AMO': 'Amos'
+             , 'OBA': 'Obadiah'
+             , 'JON': 'Jonah'
+             , 'MIC': 'Micah'
+             , 'NAM': 'Nahum'
+             , 'HAB': 'Habakkuk'
+             , 'ZEP': 'Zephaniah'
+             , 'HAG': 'Haggai'
+             , 'ZEC': 'Zechariah'
+             , 'MAL': 'Malachi'
+             }
 
 OT_NT_context = 'OT'; ## possible values: 'OT';'NT'
 

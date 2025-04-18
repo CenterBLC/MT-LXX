@@ -149,8 +149,8 @@ def convertTaskCustom(self):
         "discontinuous",
         "num",
         "strong",
-        "verse",
-        "sibling",
+        "verse"
+        # "sibling",
     }
     featureMeta = (
         ("appositioncontainer", "1 if it is an apposition container"),
@@ -195,7 +195,7 @@ def convertTaskCustom(self):
         ("punctuation", "punctuation found after a word"),
         ("ref", "biblical reference with word counting"),
         ("referent", "number of referent"),
-        ("sibling", "simbling relationship between words"),
+        #("sibling", "simbling relationship between words"),
         ("sp", "part-of-speach"),
         ("strong", "strong number"),
         ("subjref", "number of subject referent"),
@@ -378,39 +378,39 @@ def getDirector(self):
 
             cur['superParentNode'].append(superNode) #gleaning all the previous superNodes
             
-            if len(cur[TSIB]):
-                if nestable:
-                    siblings = cur[TSIB][-1]
-                    nSiblings = len(siblings)
-                    for (i, sib) in enumerate(siblings):
-                        cv.edge(sib, curNode, sibling=nSiblings - i)
-                    siblings.append(curNode)
+            # if len(cur[TSIB]):
+            #     if nestable:
+            #         siblings = cur[TSIB][-1]
+            #         nSiblings = len(siblings)
+            #         for (i, sib) in enumerate(siblings):
+            #             cv.edge(sib, curNode, sibling=nSiblings - i)
+            #         siblings.append(curNode)
 
-            if len(cur['extraSib']):
-                if nestablePhraseClause:
-                    siblings = cur['extraSib'][-1]
-                    nSiblings = len(siblings)
-                    for (i, sib) in enumerate(siblings):
-                        if curNode[0] == 'wg':
-                            Node = extraNode
-                        else:
-                            Node = curNode
-                        cv.edge(sib, Node, sibling=nSiblings - i)
-                    siblings.append(Node)
+            # if len(cur['extraSib']):
+            #     if nestablePhraseClause:
+            #         siblings = cur['extraSib'][-1]
+            #         nSiblings = len(siblings)
+            #         for (i, sib) in enumerate(siblings):
+            #             if curNode[0] == 'wg':
+            #                 Node = extraNode
+            #             else:
+            #                 Node = curNode
+            #             cv.edge(sib, Node, sibling=nSiblings - i)
+            #         siblings.append(Node)
 
-            if len(cur['superSib']):
-                if nest:
-                    siblings = cur['superSib'][-1]
-                    nSiblings = len(siblings)
-                    for (i, sib) in enumerate(siblings):
-                        cv.edge(sib, superNode, sibling=nSiblings - i)
-                    siblings.append(superNode)
+            # if len(cur['superSib']):
+            #     if nest:
+            #         siblings = cur['superSib'][-1]
+            #         nSiblings = len(siblings)
+            #         for (i, sib) in enumerate(siblings):
+            #             cv.edge(sib, superNode, sibling=nSiblings - i)
+            #         siblings.append(superNode)
 
-            cur['superSib'].append([])        
+            # cur['superSib'].append([])        
             
-            cur['extraSib'].append([])
+            # cur['extraSib'].append([])
 
-            cur[TSIB].append([])
+            # cur[TSIB].append([])
 
         #debugging using the line number of the XML file
         #print('\r' + f"xnode.sourceline: {xnode.sourceline}" + '\r')
@@ -432,14 +432,14 @@ def getDirector(self):
         if extraNode is not None:
             if len(cur['extraParent']):
                 cur['extraParent'].pop()
-            if len(cur['extraSib']):
-                cur['extraSib'].pop()
+            # if len(cur['extraSib']):
+            #     cur['extraSib'].pop()
 
         if superNode is not None:
             if len(cur['superParentNode']):
                 cur['superParentNode'].pop()
-            if len(cur['superSib']):
-                cur['superSib'].pop()
+            # if len(cur['superSib']):
+            #     cur['superSib'].pop()
         
         if cur[TNEST] == []:
             cv.terminate(curNode)
@@ -1090,9 +1090,9 @@ def getDirector(self):
             cur["subjrefEdges"] = []
             cur["frameEdges"] = []
             cur["extraParent"] = [] #define dictionary that carries all the previous extraNodes
-            cur["extraSib"] = [] #define dictionary that carries all the siblings with extraNodes
+            #cur["extraSib"] = [] #define dictionary that carries all the siblings with extraNodes
             cur["superParentNode"] = [] #define dictionary that carries all the previous superNodes
-            cur['superSib'] = [] #define dictionary that carries all the siblings with superNodes
+            #cur['superSib'] = [] #define dictionary that carries all the siblings with superNodes
             walkNode(cv, cur, new_book)
 
             xIdIndex = cur["xIdIndex"]
@@ -1151,12 +1151,12 @@ def getDirector(self):
                     description=f"this is XML attribute {fName}",
                     valueType="str",
                 )
-            if fName == "sibling":
-               cv.meta(
-                    fName,
-                    description=f"this is XML attribute {fName}",
-                    valueType="int",
-                )
+            # if fName == "sibling":
+            #    cv.meta(
+            #         fName,
+            #         description=f"this is XML attribute {fName}",
+            #         valueType="int",
+            #     )
 
         if verbose == 1:
             console("source reading done")

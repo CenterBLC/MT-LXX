@@ -77,11 +77,11 @@ X = XML(
     renameAtts=renameAtts,
     verbose=1,
     xml="2025-04-17",
-    tf="0.0.2"
+    tf="0.0.3"
 )
 
-#X.task(check=True)
-#X.task(convert=True)
+X.task(check=True)
+X.task(convert=True)
 X.task(load=True)
 X.task(app=True)
 # %%

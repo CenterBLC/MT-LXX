@@ -1,7 +1,7 @@
-OK  1 namespace for c                :    64x None
-OK  1 namespace for chapter          :    50x None
-OK  1 namespace for milestone        :  1533x None
-OK  1 namespace for p                :  1533x None
-OK  1 namespace for sentence         :  1533x None
-OK  1 namespace for w                : 32365x None
-OK  1 namespace for wg               : 22330x None
+OK  1 namespace for c                :    68x None
+OK  1 namespace for chapter          :    90x None
+OK  1 namespace for milestone        :  2746x None
+OK  1 namespace for p                :  2746x None
+OK  1 namespace for sentence         :  2746x None
+OK  1 namespace for w                : 58467x None
+OK  1 namespace for wg               : 40669x None

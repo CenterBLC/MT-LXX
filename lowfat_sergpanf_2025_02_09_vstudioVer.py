@@ -82,8 +82,6 @@ final_verbal_phrases = {'participle': 'PreC',
                         'imperative': 'Pred',
                         'optative': 'Pred'}
 
-bookFakeNodeCur = ''
-
 def convertTaskCustom(self):
     """Implementation of the "convert" task.
 
@@ -317,16 +315,6 @@ def getDirector(self):
             An lxml element node.
         """
         tag = etree.QName(xnode.tag).localname
-
-        global bookFakeNodeCur
-        if (tag == 'chapter'):
-            bookShort = (xnode.get('id') or '').split(' ')[0]
-            if (bookFakeNodeCur != bookShort):
-                bookFakeNodeCur = bookShort
-                new_book = etree.Element('book', {'id': bookShort})
-                new_book.append(xnode)
-                walkNode(cv, cur, new_book)
-                return
 
         if tag == "w":
             tag = "word"
@@ -1072,60 +1060,65 @@ def getDirector(self):
         brokenRefs = {}
 
         for (xmlFolder, xmlFiles) in self.getXML():
+
+            # a single folder must contain all the chapters of one same book
+            new_book = etree.Element('book', {'id': xmlFolder})
             for xmlFile in xmlFiles:
                 i += 1
                 console(f"\r{i:>4} {xmlFile:<50}", newline=False)
-
+                
                 with open(f"{xmlPath}/{xmlFolder}/{xmlFile}", encoding="utf8") as fh:
                     text = fh.read()
                     text = transformFunc(text)
                     tree = etree.parse(text, parser)
                     root = tree.getroot()
-                    cur[XNEST] = []
-                    cur[TNEST] = [] #define dictionary that carries all the previous curNodes
-                    cur[TSIB] = [] #define dictionary that carries all the siblings with curNodes
-                    cur['book'] = None
-                    cur["chapter"] = None
-                    cur["verse"] = None
-                    cur["bookshort"] = None
-                    cur["sentNum"] = 0 #define number of the sentence
-                    cur["groupNum"] = 0 #define number of the group
-                    cur["clNum"] = 0 #define number of the clause
-                    cur["phraseNum"] = 0 #define number of the phrase
-                    cur["subphraseNum"] = 0 #define number of the subphrase
-                    cur["xIdIndex"] = {}
-                    cur["subjrefEdges"] = []
-                    cur["frameEdges"] = []
-                    cur["extraParent"] = [] #define dictionary that carries all the previous extraNodes
-                    cur["extraSib"] = [] #define dictionary that carries all the siblings with extraNodes
-                    cur["superParentNode"] = [] #define dictionary that carries all the previous superNodes
-                    cur['superSib'] = [] #define dictionary that carries all the siblings with superNodes
-                    walkNode(cv, cur, root)
+                    new_book.append(root)
 
-                xIdIndex = cur["xIdIndex"]
-                ot_nt_prefix = "o" if (OT_NT_context == 'OT') else "n"
-                noXId = ot_nt_prefix + "00000000000"
+            cur[XNEST] = []
+            cur[TNEST] = [] #define dictionary that carries all the previous curNodes
+            cur[TSIB] = [] #define dictionary that carries all the siblings with curNodes
+            cur['book'] = None
+            cur["chapter"] = None
+            cur["verse"] = None
+            cur["bookshort"] = None
+            cur["sentNum"] = 0 #define number of the sentence
+            cur["groupNum"] = 0 #define number of the group
+            cur["clNum"] = 0 #define number of the clause
+            cur["phraseNum"] = 0 #define number of the phrase
+            cur["subphraseNum"] = 0 #define number of the subphrase
+            cur["xIdIndex"] = {}
+            cur["subjrefEdges"] = []
+            cur["frameEdges"] = []
+            cur["extraParent"] = [] #define dictionary that carries all the previous extraNodes
+            cur["extraSib"] = [] #define dictionary that carries all the siblings with extraNodes
+            cur["superParentNode"] = [] #define dictionary that carries all the previous superNodes
+            cur['superSib'] = [] #define dictionary that carries all the siblings with superNodes
+            walkNode(cv, cur, new_book)
 
-                ## possible start comment here to avoid subjrefEdges AND frameRefs
-                # for (fromNode, xIds) in cur["subjrefEdges"]:
-                #     for xId in xIds.split(";"):
-                #         toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
-                #         if toNode is None:
-                #             brokenRefs.setdefault("subjref", {}).setdefault(
-                #                 f"{xmlFolder}/{xmlFile}", set()
-                #             ).add(xId)
-                #         else:
-                #             cv.edge(fromNode, toNode, subjref=None)
+            xIdIndex = cur["xIdIndex"]
+            ot_nt_prefix = "o" if (OT_NT_context == 'OT') else "n"
+            noXId = ot_nt_prefix + "00000000000"
 
-                # for (fromNode, xIds, label) in cur["frameEdges"]:
-                #     for xId in xIds.split(";"):
-                #         toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
-                #         if toNode is None:
-                #             brokenRefs.setdefault("frame", {}).setdefault(
-                #                 f"{xmlFolder}/{xmlFile}", set()
-                #             ).add(xId)
-                #         else:
-                #             cv.edge(fromNode, toNode, frame=label)
+            ## possible start comment here to avoid subjrefEdges AND frameRefs
+            # for (fromNode, xIds) in cur["subjrefEdges"]:
+            #     for xId in xIds.split(";"):
+            #         toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
+            #         if toNode is None:
+            #             brokenRefs.setdefault("subjref", {}).setdefault(
+            #                 f"{xmlFolder}/{xmlFile}", set()
+            #             ).add(xId)
+            #         else:
+            #             cv.edge(fromNode, toNode, subjref=None)
+
+            # for (fromNode, xIds, label) in cur["frameEdges"]:
+            #     for xId in xIds.split(";"):
+            #         toNode = fromNode if xId == noXId else xIdIndex.get(xId, None)
+            #         if toNode is None:
+            #             brokenRefs.setdefault("frame", {}).setdefault(
+            #                 f"{xmlFolder}/{xmlFile}", set()
+            #             ).add(xId)
+            #         else:
+            #             cv.edge(fromNode, toNode, frame=label)
             ## possible comment end to avoid subjref AND frameRefs
 
             console("")

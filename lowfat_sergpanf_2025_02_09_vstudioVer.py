@@ -688,6 +688,12 @@ def getDirector(self):
             if len(atts):
                 cv.feature(extraNode, **atts_phrase)
 
+            if isinstance(atts, dict):
+                if "greek" not in atts or atts["greek"] is None:
+                    atts["greek"] = ''
+                if "greekstrong" not in atts or atts["greekstrong"] is None:
+                    atts["greekstrong"] = ''
+
             curNode = cv.slot(key=key)
             cv.feature(curNode, **atts)  
 
@@ -1109,7 +1115,7 @@ def getDirector(self):
         for (xmlFolder, xmlFiles) in self.getXML():
 
             # a single folder must contain all the chapters of one same book
-            new_book = etree.Element('book', {'id': xmlFolder})
+            new_book = etree.Element('book', {'id': xmlFolder[-3:]})
             for xmlFile in xmlFiles:
                 i += 1
                 console(f"\r{i:>4} {xmlFile:<50}", newline=False)

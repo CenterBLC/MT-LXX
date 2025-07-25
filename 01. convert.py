@@ -2,6 +2,7 @@
 #%load_ext autoreload
 #%autoreload 2 
 
+# %%
 import os
 import sys
 current_working_dir = os.getcwd()
@@ -10,11 +11,11 @@ sys.path.append(current_working_dir)
 sys.path = list(dict.fromkeys(sys.path))
 #print(sys.path)
 import importlib
-module_name = "lowfat_sergpanf_2025_02_09_vstudioVer"
+module_name = "lowf at_sergpanf_2025_02_09_vstudioVer"
 module = importlib.import_module(module_name)
 importlib.reload(module)
 
-#  
+# %%
 from tf.convert.xml import XML
 from lowfat_sergpanf_2025_02_09_vstudioVer import convertTaskCustom
 #from tf.advanced.helpers import dm

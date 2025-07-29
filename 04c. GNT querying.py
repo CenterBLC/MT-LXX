@@ -2,7 +2,7 @@
 from tf.advanced.display import loadCss
 from tf.advanced.display import displayReset
 from tf.app import use
-GNT = use('CenterBLC/N1904', version='1.0.0', hoist=globals()) # hoist globals will inject CSS in HTML results
+GNT = use('CenterBLC/N1904', version='1.0.0') # , hoist=globals()) # hoist globals will inject CSS in HTML results
 # Fgnt, Lgnt, Tgnt = GNT.api.F, GNT.api.L, GNT.api.T
 
 
@@ -80,5 +80,21 @@ GNT.pretty(382714, condensed=False, multiFeatures=False, hiddenTypes={"wg", "sub
 loadCss(GNT)
 # First clause id is 138067 -- not found in Mat 1:1, but first in Mat 1:2!!!
 GNT.pretty(138067, condensed=False, multiFeatures=False, hiddenTypes={"wg", "subphrase"}, hideTypes=True, queryFeatures=False, withNodes=True)
+
+# %%
+loadCss(GNT)
+
+results = GNT.search("""
+book book=III_John
+    chapter chapter=1
+        verse verse=1
+            word lemma
+""")
+
+# GNT.show(results, start=1, end=1000, condensed=True, multiFeatures=False, hiddenTypes={"wg", "subphrase"}, hideTypes=True, queryFeatures=False, withNodes=True)
+GNT.show(results, start=1, end=1000, condensed=True, multiFeatures=False
+         #, hiddenTypes={"wg", "subphrase"}
+         #, hideTypes=True
+         , queryFeatures=False, withNodes=True)
 
 # %%

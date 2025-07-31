@@ -98,9 +98,11 @@ print(s[0]) # indeed, 3 John book this is
 i=0
 file_input=[]
 SELECTED_BOOK = 'III_John'
-OUTPUTFILE_SUFFIX = '_normalized'
+OUTPUTFILE_SUFFIX = 'normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
 BOOK_ID = 137804 # for 3 John
+# MODUS = 'clear' # 'XYs'
+MODUS = 'XYs'
 
 # nodes_for_book = GNT.api.L.i(BOOK_ID)
 verses_ofthe_Book = GNT.api.L.d(BOOK_ID, 'verse')
@@ -119,16 +121,29 @@ for verse in verses_ofthe_Book:
 
             # in Python, range excludes the last element!
             range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
-            phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in range_of_orphan_words])
-            phrase_text += "| "
-            verse_text = verse_text + phrase_text
+
+            if (MODUS == 'clear'):
+                phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in range_of_orphan_words])
+                phrase_text += "| "
+                verse_text = verse_text + phrase_text
+            
+            if (MODUS == 'XYs'):
+                phrase_text = "".join(["X"] * (len(range_of_orphan_words) - 1))
+                phrase_text += "Y"
+                verse_text = verse_text + phrase_text
 
             unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in range_of_orphan_words]
 
         # do this in any case for each regular phrase (unused_words_ofthe_verse[0] == words_for_phrase[0])
-        phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in words_for_phrase])
-        phrase_text += "| "
-        verse_text = verse_text + phrase_text
+        if (MODUS == 'clear'):
+            phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in words_for_phrase])
+            phrase_text += "| "
+            verse_text = verse_text + phrase_text
+
+        if (MODUS == 'XYs'):
+            phrase_text = "".join(["X"] * (len(words_for_phrase) - 1))
+            phrase_text += "Y"
+            verse_text = verse_text + phrase_text
 
         unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in words_for_phrase]
 
@@ -142,7 +157,7 @@ for verse in verses_ofthe_Book:
         print(final)
     i=i+1
     
-with open('./data_gnt/output_' + SELECTED_BOOK + OUTPUTFILE_SUFFIX, 'w', encoding='utf-8') as file:
+with open('./data_gnt/output_' + SELECTED_BOOK + "_" + MODUS + "_" + OUTPUTFILE_SUFFIX, 'w', encoding='utf-8') as file:
     for line in file_input:
         file.write(line + '\n')
 

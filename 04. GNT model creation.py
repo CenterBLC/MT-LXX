@@ -65,10 +65,10 @@ VERSE_ID = 390213 # for 3 John 1:1
 
 # ran search query for 3 John 1:1, where received verse's node id
 nodes_for_verse = GNT.api.L.i(VERSE_ID)
-phrases_among_nodes = sorted([node for node in nodes_for_verse if GNT.api.F.otype.v(node) == 'phrase'], key=lambda node: node)
+phrases_ofthe_verse = sorted([node for node in nodes_for_verse if GNT.api.F.otype.v(node) == 'phrase'], key=lambda node: node)
 
 verse_text = ""
-for phrase in phrases_among_nodes:
+for phrase in phrases_ofthe_verse:
     phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in GNT.api.L.d(phrase, 'word')])
     # phrase_text += "|" if phrase_text == 'W' else "| "
     phrase_text += "| "
@@ -102,19 +102,35 @@ OUTPUTFILE_SUFFIX = '_normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
 BOOK_ID = 137804 # for 3 John
 
-nodes_for_book = GNT.api.L.i(BOOK_ID)
-verses_among_nodesForBook = sorted([node for node in nodes_for_book if GNT.api.F.otype.v(node) == 'verse'], key=lambda node: node)
-for verse in verses_among_nodesForBook:
+# nodes_for_book = GNT.api.L.i(BOOK_ID)
+verses_ofthe_Book = GNT.api.L.d(BOOK_ID, 'verse')
 
-    nodes_for_verse = GNT.api.L.i(verse)
-    phrases_among_nodes = sorted([node for node in nodes_for_verse if GNT.api.F.otype.v(node) == 'phrase'], key=lambda node: node)
+for verse in verses_ofthe_Book:
+
+    phrases_ofthe_verse = GNT.api.L.d(verse, 'phrase')
+    words_ofthe_verse = GNT.api.L.d(verse, 'word')
+    unused_words_ofthe_verse = list(words_ofthe_verse)
 
     verse_text = ""
-    for phrase in phrases_among_nodes:
-        phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in GNT.api.L.d(phrase, 'word')])
-        # phrase_text += "|" if phrase_text == 'W' else "| "
+    for phrase in phrases_ofthe_verse:
+
+        words_for_phrase = GNT.api.L.d(phrase, 'word')
+        if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # anomaly scenario: make a phrase of the "orphan" words (those not in a phrase)
+
+            # in Python, range excludes the last element!
+            range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
+            phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in range_of_orphan_words])
+            phrase_text += "| "
+            verse_text = verse_text + phrase_text
+
+            unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in range_of_orphan_words]
+
+        # do this in any case for each regular phrase (unused_words_ofthe_verse[0] == words_for_phrase[0])
+        phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in words_for_phrase])
         phrase_text += "| "
         verse_text = verse_text + phrase_text
+
+        unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in words_for_phrase]
 
     verse_text = verse_text.strip()
     bo, ch, ve = GNT.api.T.sectionFromNode(verse)

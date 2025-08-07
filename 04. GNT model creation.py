@@ -107,7 +107,46 @@ MODUS = 'clear' # 'XYs'
 # nodes_for_book = GNT.api.L.i(BOOK_ID)
 verses_ofthe_Book = GNT.api.L.d(BOOK_ID, 'verse')
 
-def add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words):
+def to_groups_of_uninterrupted_sequences_present_or_missing_in (sequence_of_words) -> list[list[int]]:
+    """
+    Determines the grouping of contiguous numbers within the range defined by the first and last elements of the input list
+    by indicating whether each number in the range is present in the list or missing. The function assumes that the input
+    list (sequence_of_words) is sorted.
+    It returns a
+    list of groups, where each group is a list of consecutive numbers that share the same status (present in the input list
+    or missing from it).
+    Parameters:
+        sequence_of_words (list[int]): A sorted list of integers representing positions or word identifiers.
+    Returns:
+        list[list[int]]:
+            - A list of contiguous groups of numbers (each group being a list of integers) when there are missing numbers.
+    """
+
+    # sequence_of_words[0] gives the first element, and sequence_of_words[-1] gives the last element of the list.
+    full_range = list(range(sequence_of_words[0], sequence_of_words[-1] + 1))
+    # if there are no missing numbers, return False
+    if len(sequence_of_words) == len(full_range):
+        return False
+    groups = []
+    current_group = []
+    current_type = None  # True if number is present, False if missing
+    for num in full_range:
+        if current_type is None:
+            current_type = (num in sequence_of_words)
+            current_group.append(num)
+        else:
+            num_type = (num in sequence_of_words)
+            if num_type == current_type:
+                current_group.append(num)
+            else:
+                groups.append(current_group)
+                current_group = [num]
+                current_type = num_type
+    if current_group:
+        groups.append(current_group)
+    return groups
+
+def add_sequential_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words must be uninterrupted sequence of integers 
 
     if (len(sequence_of_words) > 0):
 
@@ -125,6 +164,23 @@ def add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_wor
 
     return verse_text,unused_words_ofthe_verse
 
+def add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words can be interrupted sequence of integers, as can happen within a phrase
+
+    if (len(sequence_of_words) > 0):
+
+        groups_of_prospective_new_subphrases = to_groups_of_uninterrupted_sequences_present_or_missing_in(sequence_of_words) # can only occur within a phrase
+        if groups_of_prospective_new_subphrases:
+            for subgroup in groups_of_prospective_new_subphrases:
+                verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
+                    verse_text, MODUS, unused_words_ofthe_verse, subgroup
+                )
+        else:
+            verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
+                verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words
+            )
+
+    return verse_text,unused_words_ofthe_verse
+
 for verse in verses_ofthe_Book:
 
     phrases_ofthe_verse = GNT.api.L.d(verse, 'phrase')
@@ -135,18 +191,18 @@ for verse in verses_ofthe_Book:
     for phrase in phrases_ofthe_verse:
 
         words_for_phrase = GNT.api.L.d(phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
-        if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # anomaly scenario: make a phrase of the "orphan" words (those not in a phrase)
+        if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # make a new-subphrase of the "orphan" words (those not in a phrase)
 
             range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
             # orphans inside the verse
-            verse_text, unused_words_ofthe_verse = add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, range_of_orphan_words)
+            verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, range_of_orphan_words)
 
         # core phrase's words
-        verse_text, unused_words_ofthe_verse = add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, words_for_phrase)
+        verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, words_for_phrase)
 
     if (len(unused_words_ofthe_verse) > 0):
         # orphans at the end of the verse, after all the phrases
-        verse_text, unused_words_ofthe_verse = add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, unused_words_ofthe_verse)
+        verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, unused_words_ofthe_verse)
 
     verse_text = verse_text.strip()
     bo, ch, ve = GNT.api.T.sectionFromNode(verse)

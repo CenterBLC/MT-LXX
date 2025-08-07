@@ -101,11 +101,29 @@ SELECTED_BOOK = 'III_John'
 OUTPUTFILE_SUFFIX = 'normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
 BOOK_ID = 137804 # for 3 John
-# MODUS = 'clear' # 'XYs'
-MODUS = 'XYs'
+MODUS = 'clear' # 'XYs'
+# MODUS = 'XYs'
 
 # nodes_for_book = GNT.api.L.i(BOOK_ID)
 verses_ofthe_Book = GNT.api.L.d(BOOK_ID, 'verse')
+
+def add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words):
+
+    if (len(sequence_of_words) > 0):
+
+        if (MODUS == 'clear'):
+            phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in sequence_of_words])
+            phrase_text += "| "
+            verse_text = verse_text + phrase_text
+                
+        if (MODUS == 'XYs'):
+            phrase_text = "".join(["X"] * (len(sequence_of_words) - 1))
+            phrase_text += "Y"
+            verse_text = verse_text + phrase_text
+
+        unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in sequence_of_words]
+
+    return verse_text,unused_words_ofthe_verse
 
 for verse in verses_ofthe_Book:
 
@@ -116,36 +134,19 @@ for verse in verses_ofthe_Book:
     verse_text = ""
     for phrase in phrases_ofthe_verse:
 
-        words_for_phrase = GNT.api.L.d(phrase, 'word')
+        words_for_phrase = GNT.api.L.d(phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
         if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # anomaly scenario: make a phrase of the "orphan" words (those not in a phrase)
 
-            # in Python, range excludes the last element!
             range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
+            # orphans inside the verse
+            verse_text, unused_words_ofthe_verse = add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, range_of_orphan_words)
 
-            if (MODUS == 'clear'):
-                phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in range_of_orphan_words])
-                phrase_text += "| "
-                verse_text = verse_text + phrase_text
-            
-            if (MODUS == 'XYs'):
-                phrase_text = "".join(["X"] * (len(range_of_orphan_words) - 1))
-                phrase_text += "Y"
-                verse_text = verse_text + phrase_text
+        # core phrase's words
+        verse_text, unused_words_ofthe_verse = add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, words_for_phrase)
 
-            unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in range_of_orphan_words]
-
-        # do this in any case for each regular phrase (unused_words_ofthe_verse[0] == words_for_phrase[0])
-        if (MODUS == 'clear'):
-            phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in words_for_phrase])
-            phrase_text += "| "
-            verse_text = verse_text + phrase_text
-
-        if (MODUS == 'XYs'):
-            phrase_text = "".join(["X"] * (len(words_for_phrase) - 1))
-            phrase_text += "Y"
-            verse_text = verse_text + phrase_text
-
-        unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in words_for_phrase]
+    if (len(unused_words_ofthe_verse) > 0):
+        # orphans at the end of the verse, after all the phrases
+        verse_text, unused_words_ofthe_verse = add_verse_chunk(verse_text, MODUS, unused_words_ofthe_verse, unused_words_ofthe_verse)
 
     verse_text = verse_text.strip()
     bo, ch, ve = GNT.api.T.sectionFromNode(verse)
@@ -157,13 +158,61 @@ for verse in verses_ofthe_Book:
         print(final)
     i=i+1
     
-with open('./data_gnt/output_' + SELECTED_BOOK + "_" + MODUS + "_" + OUTPUTFILE_SUFFIX, 'w', encoding='utf-8') as file:
+with open('./data_gnt/output_' + SELECTED_BOOK + "_" + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
     for line in file_input:
         file.write(line + '\n')
 
 print('done')
 
-# %% 4: generating OUTPUT (via parsing the whole NT, but take previous code for more targeted approach)
+
+# %% 4 counting words in input and output files if they are equal
+# sergp
+def count_words_in_line(file_lines: list[str], line_number: int) -> int:
+    """
+    Counts the number of words in the specified line from a list of lines.
+
+    Args:
+        file_lines (list[str]): A list of strings, each representing a line from a text file.
+        line_number (int): The line number to count the words in (1-indexed).
+
+    Returns:
+        int: The number of words in the specified line.
+    """
+    try:
+        # Access the specified line (adjusting for 1-indexing)
+        line = file_lines[line_number - 1]
+        # Remove leading and trailing whitespace from the line
+        line = line.strip()
+        # Split the line into words using whitespace as delimiters
+        words = line.split()
+        # Return the number of words
+        return len(words)
+    except IndexError:
+        print(f"Error: Line {line_number} does not exist in the file.")
+        return 0
+
+inputfilePath = "./data_gnt/input_III_John_normalized"
+# inputfilePath = "./data_gnt/input_III_John"
+outputfilePath = "./data_gnt/output_III_John_normalized_clear"
+
+with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
+
+    lines_fi = fi.readlines()
+    lines_fo = fo.readlines()
+
+    for i in range(1,16):
+        word_count_line_input = count_words_in_line(lines_fi, i)
+        word_count_line_output = count_words_in_line(lines_fo, i)
+
+        if word_count_line_input != word_count_line_output:
+            print(f"Line {i} of file {inputfilePath} contains {word_count_line_input} words.")
+            print(f"Line {i} of file {outputfilePath} contains {word_count_line_output} words.\n")
+
+        i=i+1
+
+print ('done')
+
+# %% 5: generating OUTPUT (via parsing the whole NT, but take previous code for more targeted approach)
 i=0
 file_input=[]
 selected_book = 'III_John'

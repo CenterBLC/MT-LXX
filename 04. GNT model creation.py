@@ -152,7 +152,7 @@ def to_groups_of_uninterrupted_sequences_present_or_missing_in (sequence_of_word
 
 def add_sequential_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words must be uninterrupted sequence of integers 
 
-    if (len(sequence_of_words) > 0):
+    if (len(sequence_of_words) > 0) and any(word in unused_words_ofthe_verse for word in sequence_of_words): # only the words that are still unused can be used for building new sub-phrases. they could have been used previously for building new-subphrases in the cases of phrases within breaking-phrases of GNT.
 
         if (MODUS == 'clear'):
             phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in sequence_of_words])

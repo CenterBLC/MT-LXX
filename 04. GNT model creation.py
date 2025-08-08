@@ -436,9 +436,10 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> int:
         print(f"Error: Line {line_number} does not exist in the file.")
         return 0
 
-inputfilePath = "./data_gnt/input_III_John_normalized"
-# inputfilePath = "./data_gnt/input_III_John"
-outputfilePath = "./data_gnt/output_III_John_normalized_clear"
+# inputfilePath = "./data_gnt/input_III_John_normalized"
+# outputfilePath = "./data_gnt/output_III_John_normalized_clear"
+inputfilePath = "./data_gnt/input_NT_normalized"
+outputfilePath = "./data_gnt/output_NT_normalized_clear"
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 
@@ -511,3 +512,4 @@ with open('./data_gnt/output_' + selected_book + outputfile_suffix, 'w', encodin
     for line in file:
         file.write(line + '\n')
 # %%
+

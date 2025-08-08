@@ -120,6 +120,10 @@ def to_groups_of_uninterrupted_sequences_present_or_missing_in (sequence_of_word
     Returns:
         list[list[int]]:
             - A list of contiguous groups of numbers (each group being a list of integers) when there are missing numbers.
+            The first group: integers from the phrase
+            The second group: integers not from the phrase but before the continuation of the phrase's content
+            The third group: integers from the phrase
+            etc..
     """
 
     # sequence_of_words[0] gives the first element, and sequence_of_words[-1] gives the last element of the list.
@@ -170,10 +174,18 @@ def add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_
 
         groups_of_prospective_new_subphrases = to_groups_of_uninterrupted_sequences_present_or_missing_in(sequence_of_words) # can only occur within a phrase
         if groups_of_prospective_new_subphrases:
+            is_from_phrase = True
             for subgroup in groups_of_prospective_new_subphrases:
-                verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
-                    verse_text, MODUS, unused_words_ofthe_verse, subgroup
-                )
+                if (is_from_phrase):
+                    verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
+                        verse_text, MODUS, unused_words_ofthe_verse, subgroup
+                    )
+                else: # assuming that each intercalating member is its own new-subphrase
+                    for single in subgroup:
+                        verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
+                            verse_text, MODUS, unused_words_ofthe_verse, [single]
+                        )
+                is_from_phrase = not is_from_phrase # the from-phrase groups and not-from-phrase groups follow each other sequentially
         else:
             verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
                 verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words

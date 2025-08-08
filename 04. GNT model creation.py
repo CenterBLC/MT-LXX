@@ -343,15 +343,22 @@ def handle_book(book, i):
 
         verse_text = ""
         for phrase in phrases_ofthe_verse:
-            words_for_phrase = GNT.api.L.d(phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
-            if (len(unused_words_ofthe_verse) > 0): 
-                if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # make a new-subphrase of the "orphan" words (those not in a phrase)
-                    range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
-                    # orphans inside the verse
-                    verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, range_of_orphan_words)
+            phrases_within_phrase = GNT.api.L.d(phrase, 'phrase')
+            if (len(phrases_within_phrase) > 0):
+                phrases_to_process = phrases_within_phrase
+            else: # == 0
+                phrases_to_process = [phrase]
 
-                # core phrase's words
-                verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, words_for_phrase)
+            for phr_within_phrase in phrases_to_process: # might be just one parent phrase
+                words_for_phrase = GNT.api.L.d(phr_within_phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
+                if (len(unused_words_ofthe_verse) > 0): 
+                    if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # make a new-subphrase of the "orphan" words (those not in a phrase)
+                        range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
+                        # orphans inside the verse
+                        verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, range_of_orphan_words)
+
+                    # core phrase's words
+                    verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, words_for_phrase)
 
         if (len(unused_words_ofthe_verse) > 0):
         # orphans at the end of the verse, after all the phrases

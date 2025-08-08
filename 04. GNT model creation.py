@@ -373,9 +373,9 @@ for book in books:
     handle_book(book, i)
     
     
-# with open('./data_gnt/output_NT' + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
-#     for line in file_contents:
-#         file.write(line + '\n')
+with open('./data_gnt/output_NT_' + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
+    for line in file_contents:
+        file.write(line + '\n')
 
 print('done')
 

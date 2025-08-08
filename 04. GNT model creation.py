@@ -8,7 +8,7 @@ from tf.app import use
 GNT = use('CenterBLC/N1904', version='1.0.0')
 #GNT.api.F, GNT.api.L, GNT.api.T = GNT.api.F, GNT.api.L, GNT.api.T
 
-# %% 1: generating INPUT
+# %% 1a-book: generating INPUT
 i=0
 file=[]
 selected_book = 'III_John'
@@ -29,6 +29,29 @@ for verse in GNT.api.F.otype.s('verse'):
 with open('./data_gnt/input_' + selected_book + outputfile_suffix, 'w', encoding='utf-8') as file:
     for line in file:
         file.write(line + '\n')
+
+# %% 1b-NT: generating INPUT
+i=0
+file_contents=[]
+outputfile_suffix = 'normalized'
+
+for verse in GNT.api.F.otype.s('verse'):
+    # text = "".join([GNT.api.F.translit.v(word) if not GNT.api.F.trailer.v(word) else GNT.api.F.translit.v(word)+" " for word in GNT.api.L.d(verse,'word')]).replace("_", " ")
+    text = "".join([GNT.api.F.normalized.v(word) + " " for word in GNT.api.L.d(verse,'word')])
+    bo, ch, ve = GNT.api.T.sectionFromNode(verse)
+    final = "\t".join([bo, str(ch), str(ve), text.strip()])
+
+    # if bo == selected_book: # or 'John'
+    file_contents.append(final)
+    #     if i<3:
+    #         print(final)
+    #     i=i+1
+
+with open('./data_gnt/input_NT_' + outputfile_suffix, 'w', encoding='utf-8') as file:
+    for line in file_contents:
+        file.write(line + '\n')    
+
+print ('done')   
 
 # %%
 ## stopped here: translate code # 2 into GNT equivalent with subphrases, and through this, generate the input file.

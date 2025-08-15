@@ -266,8 +266,8 @@ file_contents=[]
 OUTPUTFILE_SUFFIX = 'normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
 # BOOK_ID = 137804 # for 3 John
-MODUS = 'clear' # 'XYs'
-# MODUS = 'XYs'
+# MODUS = 'clear' # 'XYs'
+MODUS = 'XYs'
 
 books = GNT.api.F.otype.s('book')
 
@@ -324,8 +324,8 @@ def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence
             verse_text = verse_text + phrase_text
                 
         if (MODUS == 'XYs'):
-            phrase_text = "".join(["X"] * (len(sequence_of_words) - 1))
-            phrase_text += "Y"
+            phrase_text = "".join(["X "] * (len(sequence_of_words) - 1))
+            phrase_text += "Y "
             verse_text = verse_text + phrase_text
 
         unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in sequence_of_words]
@@ -439,7 +439,8 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> int:
 # inputfilePath = "./data_gnt/input_III_John_normalized"
 # outputfilePath = "./data_gnt/output_III_John_normalized_clear"
 inputfilePath = "./data_gnt/input_NT_normalized"
-outputfilePath = "./data_gnt/output_NT_normalized_clear"
+# outputfilePath = "./data_gnt/output_NT_normalized_clear"
+outputfilePath = "./data_gnt/output_NT_normalized_XYs"
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 

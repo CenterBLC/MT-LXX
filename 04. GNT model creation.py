@@ -266,8 +266,8 @@ file_contents=[]
 OUTPUTFILE_SUFFIX = 'normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
 # BOOK_ID = 137804 # for 3 John
-MODUS = 'clear' # 'XYs'
-# MODUS = 'XYs'
+# MODUS = 'clear' # 'XYs'
+MODUS = 'XYs'
 
 books = GNT.api.F.otype.s('book')
 

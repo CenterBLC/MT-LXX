@@ -84,10 +84,12 @@ GNT.pretty(138067, condensed=False, multiFeatures=False, hiddenTypes={"wg", "sub
 # %%
 loadCss(GNT)
 
+# book book=III_John
+
 results = GNT.search("""
 book book=III_John
     chapter chapter=1
-        verse verse=1
+        verse verse=9
             word lemma
 """)
 

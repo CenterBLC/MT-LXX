@@ -266,8 +266,8 @@ file_contents=[]
 OUTPUTFILE_SUFFIX = 'normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
 # BOOK_ID = 137804 # for 3 John
-# MODUS = 'clear' # 'XYs'
-MODUS = 'XYs'
+MODUS = 'clear' # 'XYs'
+# MODUS = 'XYs'
 
 books = GNT.api.F.otype.s('book')
 
@@ -363,9 +363,33 @@ def handle_book(book, i):
         phrases_ofthe_verse = GNT.api.L.d(verse, 'phrase')
         words_ofthe_verse = GNT.api.L.d(verse, 'word')
         unused_words_ofthe_verse = list(words_ofthe_verse)
-
         verse_text = ""
+
+        def process_leftSided_orphans_ifAny(verse_text, unused_words, phrase_words): # places within new-subphrase the earlier untouched words that are to the left of the phrase which is being processed
+            if len(unused_words) > 0 and unused_words[0] < phrase_words[0]:
+                range_of_orphan_words = range(unused_words[0], phrase_words[0])
+                # orphans inside the verse to the left of the phrase
+                verse_text, unused_words = add_chunk_to_verse(verse_text, unused_words, range_of_orphan_words)
+            return verse_text, unused_words
+
+        def process_rightSided_final_orphans_ifAny(verse_text, unused_words): # places within new-subphrase the earlier untouched words that are to the right of the last phrase which is being processed
+            if len(unused_words) > 0:
+                verse_text, unused_words = add_chunk_to_verse(verse_text, unused_words, unused_words)
+            return verse_text, unused_words
+
         for phrase in phrases_ofthe_verse:
+
+            # first, before working with phrases (phrases-under) within phrases (e.g., 254330 in 3 John 1:9), 
+            # process the left-sided orphans (if any), because if the phrase has phrases inside it (phrases-under), 
+            # and they are processed instead of the phrase, then the left-sided orphans of that phrase will be processed 
+            # as a new-subphrase together with potential left-sided orphans of the phrase-under. This will lead to loss of 
+            # separation between the orphans that are located in different phrase structures. E.g., in 3 John 1:9, 
+            # after αλλ' there would be no new-subphase stop (wrong), but after ὀ there will be (correct, because of 
+            # the breaking phrases-under 254331 and 254332). To avoid that, calling process_leftSided_orphans already 
+            # here, before proceeding to the phrases-under processing.
+            words_for_phrase = GNT.api.L.d(phrase, 'word')
+            verse_text, unused_words_ofthe_verse = process_leftSided_orphans_ifAny(verse_text, unused_words_ofthe_verse, words_for_phrase)
+
             phrases_within_phrase = GNT.api.L.d(phrase, 'phrase')
             if (len(phrases_within_phrase) > 0):
                 phrases_to_process = phrases_within_phrase
@@ -374,18 +398,14 @@ def handle_book(book, i):
 
             for phr_within_phrase in phrases_to_process: # might be just one parent phrase
                 words_for_phrase = GNT.api.L.d(phr_within_phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
-                if (len(unused_words_ofthe_verse) > 0): 
-                    if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # make a new-subphrase of the "orphan" words (those not in a phrase)
-                        range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
-                        # orphans inside the verse
-                        verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, range_of_orphan_words)
+                verse_text, unused_words_ofthe_verse = process_leftSided_orphans_ifAny(verse_text, unused_words_ofthe_verse, words_for_phrase)
 
-                    # core phrase's words
-                    verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, words_for_phrase)
+                # core phrase's words
+                verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, words_for_phrase)
 
-        if (len(unused_words_ofthe_verse) > 0):
-        # orphans at the end of the verse, after all the phrases
-            verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, unused_words_ofthe_verse)
+        # orphans at the end of the verse, after all the phrases -- this is, actually, the right-sided orphans
+        # verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, unused_words_ofthe_verse)
+        verse_text, unused_words_ofthe_verse = process_rightSided_final_orphans_ifAny(verse_text, unused_words_ofthe_verse)
 
         verse_text = verse_text.strip()
         bo, ch, ve = GNT.api.T.sectionFromNode(verse)

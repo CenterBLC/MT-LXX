@@ -10,7 +10,7 @@ GNT = use('CenterBLC/N1904', version='1.0.0')
 
 # %% 1a-book: generating INPUT
 i=0
-file=[]
+file_contents=[]
 selected_book = 'III_John'
 outputfile_suffix = '_normalized'
 
@@ -21,14 +21,14 @@ for verse in GNT.api.F.otype.s('verse'):
     final = "\t".join([bo, str(ch), str(ve), text.strip()])
 
     if bo == selected_book: # or 'John'
-        file.append(final)
+        file_contents.append(final)
         if i<3:
             print(final)
         i=i+1
 
-with open('./data_gnt/input_' + selected_book + outputfile_suffix, 'w', encoding='utf-8') as file:
-    for line in file:
-        file.write(line + '\n')
+with open('./data_gnt/input_' + selected_book + outputfile_suffix, 'w', encoding='utf-8') as file_contents:
+    for line in file_contents:
+        file_contents.write(line + '\n')
 
 # %% 1b-NT: generating INPUT
 i=0
@@ -47,9 +47,9 @@ for verse in GNT.api.F.otype.s('verse'):
     #         print(final)
     #     i=i+1
 
-with open('./data_gnt/input_NT_' + outputfile_suffix, 'w', encoding='utf-8') as file:
+with open('./data_gnt/input_NT_' + outputfile_suffix, 'w', encoding='utf-8') as file_contents:
     for line in file_contents:
-        file.write(line + '\n')    
+        file_contents.write(line + '\n')    
 
 print ('done')   
 
@@ -81,7 +81,7 @@ print (found)
 
 # %% 3a-verse generating OUTPUT (via working with a specific verse directly)
 i=0
-file=[]
+file_contents=[]
 SELECTED_BOOK = 'III_John'
 OUTPUTFILE_SUFFIX = '_normalized'
 VERSE_ID = 390213 # for 3 John 1:1
@@ -102,14 +102,14 @@ bo, ch, ve = GNT.api.T.sectionFromNode(VERSE_ID)
 final = "\t".join([bo, str(ch), str(ve), verse_text.strip()])
 
 if bo == SELECTED_BOOK:
-    file.append(final)
+    file_contents.append(final)
     if i<3:
         print(final)
     i=i+1
     
-with open('./data_gnt/output_' + SELECTED_BOOK + OUTPUTFILE_SUFFIX, 'w', encoding='utf-8') as file:
-    for line in file:
-        file.write(line + '\n')
+with open('./data_gnt/output_' + SELECTED_BOOK + OUTPUTFILE_SUFFIX, 'w', encoding='utf-8') as file_contents:
+    for line in file_contents:
+        file_contents.write(line + '\n')
 
 
 # %%
@@ -119,16 +119,17 @@ print(s[0]) # indeed, 3 John book this is
 
 # %% 3b-book generating OUTPUT (via working with a specific BOOK directly)
 i=0
-file=[]
+file_contents=[]
+
 SELECTED_BOOK = 'III_John'
+BOOK_ID = 137804 # for 3 John
+
 OUTPUTFILE_SUFFIX = 'normalized'
 # VERSE_ID = 390213 # for 3 John 1:1
-BOOK_ID = 137804 # for 3 John
-MODUS = 'clear' # 'XYs'
-# MODUS = 'XYs'
+# MODUS = 'clear' # 'XYs'
+MODUS = 'XYs'
 
-# nodes_for_book = GNT.api.L.i(BOOK_ID)
-verses_ofthe_Book = GNT.api.L.d(BOOK_ID, 'verse')
+books = [book for book in GNT.api.F.otype.s('book') if book == BOOK_ID]
 
 def to_groups_of_uninterrupted_sequences_present_or_missing_in (sequence_of_words) -> list[list[int]]:
     """
@@ -173,7 +174,7 @@ def to_groups_of_uninterrupted_sequences_present_or_missing_in (sequence_of_word
         groups.append(current_group)
     return groups
 
-def add_sequential_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words must be uninterrupted sequence of integers 
+def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words must be uninterrupted sequence of integers 
 
     if (len(sequence_of_words) > 0) and any(word in unused_words_ofthe_verse for word in sequence_of_words): # only the words that are still unused can be used for building new sub-phrases. they could have been used previously for building new-subphrases in the cases of phrases within breaking-phrases of GNT.
 
@@ -183,15 +184,15 @@ def add_sequential_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, s
             verse_text = verse_text + phrase_text
                 
         if (MODUS == 'XYs'):
-            phrase_text = "".join(["X"] * (len(sequence_of_words) - 1))
-            phrase_text += "Y"
+            phrase_text = "".join(["X "] * (len(sequence_of_words) - 1))
+            phrase_text += "Y "
             verse_text = verse_text + phrase_text
 
         unused_words_ofthe_verse = [w for w in unused_words_ofthe_verse if w not in sequence_of_words]
 
     return verse_text,unused_words_ofthe_verse
 
-def add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words can be interrupted sequence of integers, as can happen within a phrase
+def add_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words can be interrupted sequence of integers, as can happen within a phrase
 
     if (len(sequence_of_words) > 0):
 
@@ -201,56 +202,88 @@ def add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, sequence_of_
             for subgroup in groups_of_prospective_new_subphrases:
                 if (is_from_phrase):
                     verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
-                        verse_text, MODUS, unused_words_ofthe_verse, subgroup
+                        verse_text, unused_words_ofthe_verse, subgroup
                     )
                 else: # assuming that each intercalating member is its own new-subphrase
                     for single in subgroup:
                         verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
-                            verse_text, MODUS, unused_words_ofthe_verse, [single]
+                            verse_text, unused_words_ofthe_verse, [single]
                         )
                 is_from_phrase = not is_from_phrase # the from-phrase groups and not-from-phrase groups follow each other sequentially
         else:
             verse_text, unused_words_ofthe_verse = add_sequential_chunk_to_verse(
-                verse_text, MODUS, unused_words_ofthe_verse, sequence_of_words
+                verse_text, unused_words_ofthe_verse, sequence_of_words
             )
 
     return verse_text,unused_words_ofthe_verse
 
-for verse in verses_ofthe_Book:
+def handle_book(book, i):
+    verses_ofthe_Book = GNT.api.L.d(book, 'verse')
+    for verse in verses_ofthe_Book:
+        phrases_ofthe_verse = GNT.api.L.d(verse, 'phrase')
+        words_ofthe_verse = GNT.api.L.d(verse, 'word')
+        unused_words_ofthe_verse = list(words_ofthe_verse)
+        verse_text = ""
 
-    phrases_ofthe_verse = GNT.api.L.d(verse, 'phrase')
-    words_ofthe_verse = GNT.api.L.d(verse, 'word')
-    unused_words_ofthe_verse = list(words_ofthe_verse)
+        def process_leftSided_orphans_ifAny(verse_text, unused_words, phrase_words): # places within new-subphrase the earlier untouched words that are to the left of the phrase which is being processed
+            if len(unused_words) > 0 and unused_words[0] < phrase_words[0]:
+                range_of_orphan_words = range(unused_words[0], phrase_words[0])
+                # orphans inside the verse to the left of the phrase
+                verse_text, unused_words = add_chunk_to_verse(verse_text, unused_words, range_of_orphan_words)
+            return verse_text, unused_words
 
-    verse_text = ""
-    for phrase in phrases_ofthe_verse:
+        def process_rightSided_final_orphans_ifAny(verse_text, unused_words): # places within new-subphrase the earlier untouched words that are to the right of the last phrase which is being processed
+            if len(unused_words) > 0:
+                verse_text, unused_words = add_chunk_to_verse(verse_text, unused_words, unused_words)
+            return verse_text, unused_words
 
-        words_for_phrase = GNT.api.L.d(phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
-        if (unused_words_ofthe_verse[0] < words_for_phrase[0]): # make a new-subphrase of the "orphan" words (those not in a phrase)
+        for phrase in phrases_ofthe_verse:
 
-            range_of_orphan_words = range(unused_words_ofthe_verse[0], words_for_phrase[0])
-            # orphans inside the verse
-            verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, range_of_orphan_words)
+            # first, before working with phrases (phrases-under) within phrases (e.g., 254330 in 3 John 1:9), 
+            # process the left-sided orphans (if any), because if the phrase has phrases inside it (phrases-under), 
+            # and they are processed instead of the phrase, then the left-sided orphans of that phrase will be processed 
+            # as a new-subphrase together with potential left-sided orphans of the phrase-under. This will lead to loss of 
+            # separation between the orphans that are located in different phrase structures. E.g., in 3 John 1:9, 
+            # after αλλ' there would be no new-subphase stop (wrong), but after ὀ there will be (correct, because of 
+            # the breaking phrases-under 254331 and 254332). To avoid that, calling process_leftSided_orphans already 
+            # here, before proceeding to the phrases-under processing.
+            words_for_phrase = GNT.api.L.d(phrase, 'word')
+            verse_text, unused_words_ofthe_verse = process_leftSided_orphans_ifAny(verse_text, unused_words_ofthe_verse, words_for_phrase)
 
-        # core phrase's words
-        verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, words_for_phrase)
+            phrases_within_phrase = GNT.api.L.d(phrase, 'phrase')
+            if (len(phrases_within_phrase) > 0):
+                phrases_to_process = phrases_within_phrase
+            else: # == 0
+                phrases_to_process = [phrase]
 
-    if (len(unused_words_ofthe_verse) > 0):
-        # orphans at the end of the verse, after all the phrases
-        verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, MODUS, unused_words_ofthe_verse, unused_words_ofthe_verse)
+            for phr_within_phrase in phrases_to_process: # might be just one parent phrase
+                words_for_phrase = GNT.api.L.d(phr_within_phrase, 'word')  # words_for_phrase implements collections.abc.Sequence, as does range
+                verse_text, unused_words_ofthe_verse = process_leftSided_orphans_ifAny(verse_text, unused_words_ofthe_verse, words_for_phrase)
 
-    verse_text = verse_text.strip()
-    bo, ch, ve = GNT.api.T.sectionFromNode(verse)
-    final = "\t".join([bo, str(ch), str(ve), verse_text.strip()])
+                # core phrase's words
+                verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, words_for_phrase)
+
+        # orphans at the end of the verse, after all the phrases -- this is, actually, the right-sided orphans
+        # verse_text, unused_words_ofthe_verse = add_chunk_to_verse(verse_text, unused_words_ofthe_verse, unused_words_ofthe_verse)
+        verse_text, unused_words_ofthe_verse = process_rightSided_final_orphans_ifAny(verse_text, unused_words_ofthe_verse)
+
+        verse_text = verse_text.strip()
+        bo, ch, ve = GNT.api.T.sectionFromNode(verse)
+        final = "\t".join([bo, str(ch), str(ve), verse_text.strip()])
 
     # if bo == SELECTED_BOOK:
-    file.append(final)
-    if i<3:
+        file_contents.append(final)
+        # if i<3:
         print(final)
-    i=i+1
-    
-with open('./data_gnt/output_' + SELECTED_BOOK + "_" + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
-    for line in file:
+        # i=i+1
+
+
+for book in books:
+    a = 1
+    handle_book(book, i)
+  
+with open('./sp_data_gnt/output_' + SELECTED_BOOK + "_" + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
+    for line in file_contents:
         file.write(line + '\n')
 
 print('done')
@@ -262,11 +295,8 @@ print (books)
 # %% 3c-NT generating OUTPUT (via working with whole NT)
 i=0
 file_contents=[]
-# SELECTED_BOOK = 'III_John'
 OUTPUTFILE_SUFFIX = 'normalized'
-# VERSE_ID = 390213 # for 3 John 1:1
-# BOOK_ID = 137804 # for 3 John
-# MODUS = 'clear' # 'XYs'
+# MODUS = 'clear'
 MODUS = 'XYs'
 
 books = GNT.api.F.otype.s('book')
@@ -423,7 +453,7 @@ for book in books:
     handle_book(book, i)
     
     
-with open('./data_gnt/output_NT_' + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
+with open('./sp_data_gnt/output_NT_' + OUTPUTFILE_SUFFIX + "_" + MODUS, 'w', encoding='utf-8') as file:
     for line in file_contents:
         file.write(line + '\n')
 
@@ -431,7 +461,6 @@ print('done')
 
 
 # %% 4 counting words in input and output files if they are equal
-# sergp
 def count_words_in_line(file_lines: list[str], line_number: int) -> int:
     """
     Counts the number of words in the specified line from a list of lines.
@@ -456,18 +485,19 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> int:
         print(f"Error: Line {line_number} does not exist in the file.")
         return 0
 
-# inputfilePath = "./data_gnt/input_III_John_normalized"
-# outputfilePath = "./data_gnt/output_III_John_normalized_clear"
-inputfilePath = "./data_gnt/input_NT_normalized"
-# outputfilePath = "./data_gnt/output_NT_normalized_clear"
-outputfilePath = "./data_gnt/output_NT_normalized_XYs"
+inputfilePath = "./sp_data_gnt/input_NT_normalized"
+outputfilePath = "./sp_data_gnt/output_NT_normalized_XYs"
+# inputfilePath = "./sp_data_gnt/input_III_John_normalized"
+# outputfilePath = "./sp_data_gnt/output_III_John_normalized_XYs"
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 
     lines_fi = fi.readlines()
     lines_fo = fo.readlines()
+    
+    max_lines = len(lines_fi) # assuming that the max_lines is the same for lines_fi and lines_fo
 
-    for i in range(1,16):
+    for i in range(1, max_lines+1):
         word_count_line_input = count_words_in_line(lines_fi, i)
         word_count_line_output = count_words_in_line(lines_fo, i)
 
@@ -479,58 +509,7 @@ with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r',
 
 print ('done')
 
-# %% 6: generating OUTPUT (via parsing the whole NT, but take previous code for more targeted approach)
-i=0
-file=[]
-selected_book = 'III_John'
-outputfile_suffix = '_normalized'
 
-for verse in GNT.api.F.otype.s('verse'):
-    verse_text = ""
-    phrases = GNT.api.L.d(verse,'phrase')
-    for phrase in phrases:
-        phrase_text = "".join([GNT.api.F.normalized.v(word) for word in GNT.api.L.d(phrase, 'word')])
-        # phrase_text += "|" if phrase_text == 'W' else "| "
-        phrase_text += "| "
-        
-        # Genesis	39	23	>JN FR BJT HSHR R>H >T KL M>WMH BJDW| B>CR JHWH >TW| W|>CR HW> <FH| JHWH MYLJX|
 
-        # text = []
-        # for word in GNT.api.L.d(subphrase, 'word'):
-        #     if not GNT.api.F.trailer.v(word):
-        #         text.append(GNT.api.F.g_cons.v(word))
-        #     else:
-        #         text.append(GNT.api.F.g_cons.v(word) + " ")
-        # phrase_text = "".join(text)
-        # phrase_text = phrase_text.replace("_"," ")
-        # phrase_text = phrase_text.strip()
-        # if phrase_text == 'W':
-        #     phrase_text += "|"
-        # else:
-        #     phrase_text += "| "
-        
-        verse_text = verse_text + phrase_text
 
-    verse_text = verse_text.strip()
-    bo, ch, ve = GNT.api.T.sectionFromNode(verse)
-    final = "\t".join([bo, str(ch), str(ve), verse_text.strip()])
-
-    # if bo == 'Genesis' and str(ch) == '7' and str(ve) == '16':
-    #     if i<10:
-    #         print(final)
-    #     i=i+1
-    
-    if bo == selected_book: # or 'John'
-        file.append(final)
-        if i<3:
-            print(final)
-        i=i+1
-    
-    # if bo == 'Genesis':
-    #     file_input.append(final)
-
-with open('./data_gnt/output_' + selected_book + outputfile_suffix, 'w', encoding='utf-8') as file:
-    for line in file:
-        file.write(line + '\n')
 # %%
-

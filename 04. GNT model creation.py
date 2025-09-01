@@ -5,6 +5,7 @@ from tf.app import use
 # import matplotlib.pyplot as plt
 # import numpy as np
 
+# %%
 GNT = use('CenterBLC/N1904', version='1.0.0')
 #GNT.api.F, GNT.api.L, GNT.api.T = GNT.api.F, GNT.api.L, GNT.api.T
 
@@ -33,11 +34,12 @@ with open('./data_gnt/input_' + selected_book + outputfile_suffix, 'w', encoding
 # %% 1b-NT: generating INPUT
 i=0
 file_contents=[]
-outputfile_suffix = 'normalized'
+# outputfile_suffix = 'normalized'
+outputfile_suffix = 'translit'
 
 for verse in GNT.api.F.otype.s('verse'):
     # text = "".join([GNT.api.F.translit.v(word) if not GNT.api.F.trailer.v(word) else GNT.api.F.translit.v(word)+" " for word in GNT.api.L.d(verse,'word')]).replace("_", " ")
-    text = "".join([GNT.api.F.normalized.v(word) + " " for word in GNT.api.L.d(verse,'word')])
+    text = "".join([GNT.api.F.translit.v(word) + " " for word in GNT.api.L.d(verse,'word')])
     bo, ch, ve = GNT.api.T.sectionFromNode(verse)
     final = "\t".join([bo, str(ch), str(ve), text.strip()])
 
@@ -47,9 +49,9 @@ for verse in GNT.api.F.otype.s('verse'):
     #         print(final)
     #     i=i+1
 
-with open('./data_gnt/input_NT_' + outputfile_suffix, 'w', encoding='utf-8') as file_contents:
+with open('./sp_data_gnt/input_NT_' + outputfile_suffix, 'w', encoding='utf-8') as file:
     for line in file_contents:
-        file_contents.write(line + '\n')    
+        file.write(line + '\n')    
 
 print ('done')   
 
@@ -295,7 +297,8 @@ print (books)
 # %% 3c-NT generating OUTPUT (via working with whole NT)
 i=0
 file_contents=[]
-OUTPUTFILE_SUFFIX = 'normalized'
+# OUTPUTFILE_SUFFIX = 'normalized'
+OUTPUTFILE_SUFFIX = 'translit'
 # MODUS = 'clear'
 MODUS = 'XYs'
 
@@ -349,7 +352,7 @@ def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence
     if (len(sequence_of_words) > 0) and any(word in unused_words_ofthe_verse for word in sequence_of_words): # only the words that are still unused can be used for building new sub-phrases. they could have been used previously for building new-subphrases in the cases of phrases within breaking-phrases of GNT.
 
         if (MODUS == 'clear'):
-            phrase_text = " ".join([GNT.api.F.normalized.v(word) for word in sequence_of_words])
+            phrase_text = " ".join([GNT.api.F.translit.v(word) for word in sequence_of_words])
             phrase_text += "| "
             verse_text = verse_text + phrase_text
                 
@@ -461,7 +464,7 @@ print('done')
 
 
 # %% 4 counting words in input and output files if they are equal
-def count_words_in_line(file_lines: list[str], line_number: int) -> int:
+def count_words_in_line(file_lines: list[str], line_number: int) -> tuple[int, list[str]]:
     """
     Counts the number of words in the specified line from a list of lines.
 
@@ -480,15 +483,18 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> int:
         # Split the line into words using whitespace as delimiters
         words = line.split()
         # Return the number of words
-        return len(words)
+        return len(words), words
     except IndexError:
         print(f"Error: Line {line_number} does not exist in the file.")
         return 0
 
-inputfilePath = "./sp_data_gnt/input_NT_normalized"
-outputfilePath = "./sp_data_gnt/output_NT_normalized_XYs"
-# inputfilePath = "./sp_data_gnt/input_III_John_normalized"
-# outputfilePath = "./sp_data_gnt/output_III_John_normalized_XYs"
+inputfilePath = "./sp_data_gnt/input_NT_translit"
+outputfilePath = "./sp_data_gnt/output_NT_translit_XYs"
+# inputfilePath = "./sp_data_gnt/input_NT_lemmatranslit"
+# outputfilePath = "./sp_data_gnt/output_NT_lemmatranslit_XYs"
+# outputfilePath = "./sp_data_gnt/output_NT_lemmatranslit_clear"
+# inputfilePath = "./sp_data_gnt/input_NT_normalized"
+# outputfilePath = "./sp_data_gnt/output_NT_normalized_XYs"
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 
@@ -497,13 +503,22 @@ with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r',
     
     max_lines = len(lines_fi) # assuming that the max_lines is the same for lines_fi and lines_fo
 
+    is_an_example_displayed = False
     for i in range(1, max_lines+1):
-        word_count_line_input = count_words_in_line(lines_fi, i)
-        word_count_line_output = count_words_in_line(lines_fo, i)
+        word_count_line_input, words_in = count_words_in_line(lines_fi, i)
+        word_count_line_output, words_out = count_words_in_line(lines_fo, i)
 
         if word_count_line_input != word_count_line_output:
             print(f"Line {i} of file {inputfilePath} contains {word_count_line_input} words.")
-            print(f"Line {i} of file {outputfilePath} contains {word_count_line_output} words.\n")
+            print(f"Line {i} of file {outputfilePath} contains {word_count_line_output} words.")
+            if not is_an_example_displayed:
+                print("compare the lines:")
+                print(lines_fi[i-1])
+                print(lines_fo[i-1])
+                print(words_in)
+                print(words_out)
+                is_an_example_displayed = True
+            print("\n")
 
         i=i+1
 
@@ -513,3 +528,4 @@ print ('done')
 
 
 # %%
+

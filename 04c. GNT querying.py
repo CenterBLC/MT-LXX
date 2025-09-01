@@ -2,6 +2,8 @@
 from tf.advanced.display import loadCss
 from tf.advanced.display import displayReset
 from tf.app import use
+
+# %%
 GNT = use('CenterBLC/N1904', version='1.0.0') # , hoist=globals()) # hoist globals will inject CSS in HTML results
 # Fgnt, Lgnt, Tgnt = GNT.api.F, GNT.api.L, GNT.api.T
 
@@ -87,16 +89,16 @@ loadCss(GNT)
 # book book=III_John
 
 results = GNT.search("""
-book book=III_John
-    chapter chapter=1
-        verse verse=9
-            word lemma
+book book=Matthew
+    chapter chapter=9
+        verse verse=17
+            word lemma translit
 """)
 
 # GNT.show(results, start=1, end=1000, condensed=True, multiFeatures=False, hiddenTypes={"wg", "subphrase"}, hideTypes=True, queryFeatures=False, withNodes=True)
 GNT.show(results, start=1, end=1000, condensed=True, multiFeatures=False
          #, hiddenTypes={"wg", "subphrase"}
          #, hideTypes=True
-         , queryFeatures=False, withNodes=True)
+         , queryFeatures=True, withNodes=True)
 
 # %%

@@ -1,11 +1,19 @@
 # %%
 from tf.app import use
+
+# %%
+import importlib
+import sp_string_functions
+importlib.reload(sp_string_functions)
 from sp_string_functions import merge_strings
+from sp_string_functions import merge_features
+
 # import re
 # import os
 # import matplotlib.pyplot as plt
 # import numpy as np
 
+# %%
 GNT = use('CenterBLC/N1904', version='1.0.0')
 #GNT.api.F, GNT.api.L, GNT.api.T = GNT.api.F, GNT.api.L, GNT.api.T
 
@@ -37,14 +45,12 @@ file_contents=[]
 # outputfile_suffix = 'normalized'
 # outputfile_suffix = 'translit'
 # outputfile_suffix = 'norm_mer_translit'
-outputfile_suffix = 'nmt'
+outputfile_suffix = 'nmt_llt'
 
 for verse in GNT.api.F.otype.s('verse'):
-    # text = "".join([GNT.api.F.translit.v(word) if not GNT.api.F.trailer.v(word) else GNT.api.F.translit.v(word)+" " for word in GNT.api.L.d(verse,'word')]).replace("_", " ")
-    # text = "".join([GNT.api.F.normalized.v(word) + "_" + GNT.api.F.translit.v(word) + " " for word in GNT.api.L.d(verse,'word')])
-    text = "".join([merge_strings(GNT.api.F.normalized.v(word), GNT.api.F.translit.v(word)) + " " for word in GNT.api.L.d(verse,'word')])
+    # text = "".join([merge_strings(GNT.api.F.normalized.v(word), GNT.api.F.translit.v(word)) + " " for word in GNT.api.L.d(verse,'word')])
+    text = "".join([merge_features(GNT.api.F, word) + " " for word in GNT.api.L.d(verse,'word')])
     
-    merge_strings
     bo, ch, ve = GNT.api.T.sectionFromNode(verse)
     final = "\t".join([bo, str(ch), str(ve), text.strip()])
 
@@ -302,10 +308,7 @@ print (books)
 # %% 3c-NT generating OUTPUT (via working with whole NT)
 i=0
 file_contents=[]
-# OUTPUTFILE_SUFFIX = 'normalized'
-# OUTPUTFILE_SUFFIX = 'translit'
-# OUTPUTFILE_SUFFIX = 'nt'
-OUTPUTFILE_SUFFIX = 'nmt'
+OUTPUTFILE_SUFFIX = 'nmt_llt'
 
 # MODUS = 'clear'
 MODUS = 'XYs'
@@ -360,7 +363,7 @@ def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence
     if (len(sequence_of_words) > 0) and any(word in unused_words_ofthe_verse for word in sequence_of_words): # only the words that are still unused can be used for building new sub-phrases. they could have been used previously for building new-subphrases in the cases of phrases within breaking-phrases of GNT.
 
         if (MODUS == 'clear'):
-            phrase_text = " ".join([merge_strings(GNT.api.F.normalized.v(word), GNT.api.F.translit.v(word)) for word in sequence_of_words])
+            phrase_text = " ".join([merge_features(GNT.api.F, word) for word in sequence_of_words])
             phrase_text += "| "
             verse_text = verse_text + phrase_text
                 
@@ -496,8 +499,8 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> tuple[int, l
         print(f"Error: Line {line_number} does not exist in the file.")
         return 0
 
-inputfilePath = "./sp_data_gnt/input_NT_nmt"
-outputfilePath = "./sp_data_gnt/output_NT_nmt_XYs"
+inputfilePath = "./sp_data_gnt/input_NT_nmt_llt"
+outputfilePath = "./sp_data_gnt/output_NT_nmt_llt_XYs"
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 

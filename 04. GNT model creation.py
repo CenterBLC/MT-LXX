@@ -1,7 +1,7 @@
-# %%
+# %% import use
 from tf.app import use
 
-# %%
+# %% import sp_string_functions
 import importlib
 import sp_string_functions
 importlib.reload(sp_string_functions)
@@ -13,7 +13,7 @@ from sp_string_functions import merge_features
 # import matplotlib.pyplot as plt
 # import numpy as np
 
-# %%
+# %% GNT
 GNT = use('CenterBLC/N1904', version='1.0.0')
 #GNT.api.F, GNT.api.L, GNT.api.T = GNT.api.F, GNT.api.L, GNT.api.T
 
@@ -45,7 +45,7 @@ file_contents=[]
 # outputfile_suffix = 'normalized'
 # outputfile_suffix = 'translit'
 # outputfile_suffix = 'norm_mer_translit'
-outputfile_suffix = 'nmt_llt'
+outputfile_suffix = 'nmt_llt_cgp'
 
 for verse in GNT.api.F.otype.s('verse'):
     # text = "".join([merge_strings(GNT.api.F.normalized.v(word), GNT.api.F.translit.v(word)) + " " for word in GNT.api.L.d(verse,'word')])
@@ -499,8 +499,8 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> tuple[int, l
         print(f"Error: Line {line_number} does not exist in the file.")
         return 0
 
-inputfilePath = "./sp_data_gnt/input_NT_nmt_llt"
-outputfilePath = "./sp_data_gnt/output_NT_nmt_llt_XYs"
+inputfilePath = "./sp_data_gnt/input_NT_nmt_llt_cgp"
+outputfilePath = "./sp_data_gnt/output_NT_nmt_llt_XYs" # older XY file, no need to regenerate it each time
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 

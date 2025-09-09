@@ -16,15 +16,7 @@ def merge_strings(s1: str, s2: str) -> str:
     
     return ''.join(result)
 
-
-
 def merge_features(api_f, word: str) -> str:
-
-    # the list of possible features for addition
-    # mood
-    # sp
-    # tense
-    # morph
 
     def merge_normalized_translit(api_f, word: str) -> str:
         s1 = api_f.normalized.v(word)
@@ -37,27 +29,38 @@ def merge_features(api_f, word: str) -> str:
         s2 = api_f.lemmatranslit.v(word).replace(" ", "") # fix against error lemmatranslit's -- both have issues
 
         return merge_strings(s1, s2)
+    
+    # get_feature_value(, word: str) -> str:
+
+    def get_feature_value(api_f, api_feature, feature_name, word: str) -> str:
+
+        # api_f.case.v(word)
+        value = api_feature.v(word) if hasattr(api_f, feature_name) else ''
+        value = '' if value is None else value.replace(" ", "")
+        return value
 
     def retreive_case_gender_person(api_f, word: str) -> str:
-        # Retrieve case, gender, and person features from api_f for the given word.
-        # Fallback to empty strings if any feature is missing.
-        case_value = api_f.case.v(word) if hasattr(api_f, 'case') else ''
-        gender_value = api_f.gender.v(word) if hasattr(api_f, 'gender') else ''
-        person_value = api_f.person.v(word) if hasattr(api_f, 'person') else ''
+        
+        case_value = get_feature_value(api_f, api_f.case, 'case', word)
+        gender_value = get_feature_value(api_f, api_f.gender, 'gender', word)
+        person_value = get_feature_value(api_f, api_f.person, 'person', word)
 
-        # Optional: Remove any spaces (in case the features include them)
-        case_value = '' if case_value is None else case_value.replace(" ", "")
-        gender_value = '' if gender_value is None else gender_value.replace(" ", "")
-        person_value = '' if person_value is None else person_value.replace(" ", "")
-
-        # Combine the features. Adjust the merging logic if needed.
         return case_value + gender_value + person_value
-
     
+    def retreive_mood_sp_tense_morph(api_f, word: str) -> str:
+
+        mood_value = get_feature_value(api_f, api_f.mood, 'mood', word)
+        sp_value = get_feature_value(api_f, api_f.sp, 'sp', word)
+        tense_value = get_feature_value(api_f, api_f.tense, 'tense', word)
+        morph_value = get_feature_value(api_f, api_f.morph, 'morph', word)
+
+        return mood_value + sp_value + tense_value + morph_value
+
     nmt = merge_normalized_translit(api_f, word)
     llt = merge_lemma_lemmatranslit(api_f, word)
     cgp = retreive_case_gender_person(api_f, word)
-    res = nmt + llt + cgp
+    mstm = retreive_mood_sp_tense_morph(api_f, word)
+    res = nmt + llt + cgp + mstm
 
     return res
 

@@ -56,11 +56,15 @@ def merge_features(api_f, word: str) -> str:
 
         return mood_value + sp_value + tense_value + morph_value
 
-    nmt = merge_normalized_translit(api_f, word)
-    llt = merge_lemma_lemmatranslit(api_f, word)
-    cgp = retreive_case_gender_person(api_f, word)
-    mstm = retreive_mood_sp_tense_morph(api_f, word)
-    res = nmt + llt + cgp + mstm
+    n = api_f.normalized.v(word)
+    #nmt = merge_normalized_translit(api_f, word)
+    l = api_f.lemma.v(word).replace(" ", "") # fix against error lemma's
+    # llt = merge_lemma_lemmatranslit(api_f, word)
+    # cgp = retreive_case_gender_person(api_f, word)
+    # mstm = retreive_mood_sp_tense_morph(api_f, word)
+
+    # res = nmt + llt + cgp + mstm
+    res = n + l
 
     return res
 

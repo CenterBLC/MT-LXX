@@ -46,7 +46,8 @@ file_contents=[]
 # outputfile_suffix = 'translit'
 # outputfile_suffix = 'norm_mer_translit'
 # outputfile_suffix = 'NLCM' # NLCM is abbrev. for nmt_llt_cgp_mstm
-outputfile_suffix = 'nl'
+# outputfile_suffix = 'nl'
+outputfile_suffix = 'nlcgpS'
 
 for verse in GNT.api.F.otype.s('verse'):
     # text = "".join([merge_strings(GNT.api.F.normalized.v(word), GNT.api.F.translit.v(word)) + " " for word in GNT.api.L.d(verse,'word')])
@@ -500,8 +501,8 @@ def count_words_in_line(file_lines: list[str], line_number: int) -> tuple[int, l
         print(f"Error: Line {line_number} does not exist in the file.")
         return 0
 
-inputfilePath = "./sp_data_gnt/input_NT_nl"
-outputfilePath = "./sp_data_gnt/output_NT_nmt_llt_XYs" # older XY file, no need to regenerate it each time
+inputfilePath = "./sp_data_gnt/input_NT_nlcgpS"
+outputfilePath = "./sp_data_gnt/output_NT_XYs" # older XY file, no need to regenerate it each time
 
 with open(inputfilePath, 'r', encoding='utf-8') as fi, open(outputfilePath, 'r', encoding='utf-8') as fo:
 

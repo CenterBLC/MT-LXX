@@ -32,18 +32,20 @@ def merge_features(api_f, word: str) -> str:
     
     # get_feature_value(, word: str) -> str:
 
-    def get_feature_value(api_f, api_feature, feature_name, word: str) -> str:
+    def get_feature_value(api_f, api_feature, feature_name, feature_sign, word: str) -> str:
 
         # api_f.case.v(word)
         value = api_feature.v(word) if hasattr(api_f, feature_name) else ''
-        value = '' if value is None else value.replace(" ", "")
+        value = '' if value in (None, '') else f"{feature_sign}:{value.replace(' ', '')}"
+        value = '' if value in (None, '') else value[:5] # 2 characters are technical and 3 -- part of the value itself
+        
         return value
 
     def retreive_case_gender_person(api_f, word: str) -> str:
         
-        case_value = get_feature_value(api_f, api_f.case, 'case', word)
-        gender_value = get_feature_value(api_f, api_f.gender, 'gender', word)
-        person_value = get_feature_value(api_f, api_f.person, 'person', word)
+        case_value = get_feature_value(api_f, api_f.case, 'case', 'ק', word)
+        gender_value = get_feature_value(api_f, api_f.gender, 'gender', 'ג', word)
+        person_value = get_feature_value(api_f, api_f.person, 'person', 'פ' ,word)
 
         return case_value + gender_value + person_value
     
@@ -56,15 +58,19 @@ def merge_features(api_f, word: str) -> str:
 
         return mood_value + sp_value + tense_value + morph_value
 
-    n = api_f.normalized.v(word)
-    #nmt = merge_normalized_translit(api_f, word)
-    l = api_f.lemma.v(word).replace(" ", "") # fix against error lemma's
-    # llt = merge_lemma_lemmatranslit(api_f, word)
-    # cgp = retreive_case_gender_person(api_f, word)
+    # region preparing return blocks
+    # using Heberew 'nun' character to tell AI that this is a separate 'normalized' entity value. ":" is a category separator for AI.
+    n = f"נ:{api_f.normalized.v(word)}" 
+
+    # fix against lemma error with 'replace'; using Heberew 'lamed' character to tell AI that this is a separate 'lemma' entity value. ":" is a category separator for AI.
+    l = f"ל:{api_f.lemma.v(word).replace(" ", "")}" 
+
+    cgp = retreive_case_gender_person(api_f, word)
     # mstm = retreive_mood_sp_tense_morph(api_f, word)
+    # endregion
 
     # res = nmt + llt + cgp + mstm
-    res = n + l
+    res = n + l + cgp
 
     return res
 

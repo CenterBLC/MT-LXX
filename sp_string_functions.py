@@ -18,6 +18,18 @@ def merge_strings(s1: str, s2: str) -> str:
 
 def merge_features(api_f, word: str) -> str:
 
+    abbreviations = [ 
+        {'feature':'case', 'nominative':'⊙', 'accusative':'◉', 'genitive':'∈', 'dative':'⇨', 'vocative': '📣'},
+        {'feature':'gender', 'masculine':'♂', 'feminine':'♀', 'neutral':'⚲'},
+        {'feature':'person', 'p1':'🧑', 'p2':'👤', 'p3':'👥'},
+        {'feature':'number', 'singular':'①', 'plural':'∴'},
+
+        {'feature':'mood', 'indicative':'●', 'infinitive':'∾', 'participle':'▦', 'subjunctive':'△', 'imperative':'⚡', 'optative':'☆', },
+        {'feature':'sp', 'subs':'■', 'verb':'→', 'art':'▣', 'conj':'∧', 'pron':'☺', 'prep':'↦', 'adjv':'✦', 'advb':'⋆', 'intj':'‼', 'num':'№'},
+        {'feature':'tense', 'aorist':'◆', 'present':'≈', 'imperfect':'◐', 'future':'⇢', 'perfect':'◎', 'pluperfect':'⨀'},
+        
+    ]
+    
     def merge_normalized_translit(api_f, word: str) -> str:
         s1 = api_f.normalized.v(word)
         s2 = api_f.translit.v(word)
@@ -36,41 +48,53 @@ def merge_features(api_f, word: str) -> str:
 
         # api_f.case.v(word)
         value = api_feature.v(word) if hasattr(api_f, feature_name) else ''
+        for abbr in abbreviations:
+            if feature_name == abbr.get('feature'):
+                if value in abbr:
+                    value = abbr[value]
+                break
         value = '' if value in (None, '') else f"{feature_sign}:{value.replace(' ', '')}"
-        value = '' if value in (None, '') else value[:5] # 2 characters are technical and 3 -- part of the value itself
+        # value = '' if value in (None, '') else value[:5] # 2 characters are technical and 3 -- part of the value itself
         
         return value
 
-    def retreive_case_gender_person(api_f, word: str) -> str:
+    def retreive_case_gender_person_number(api_f, word: str) -> str:
         
-        case_value = get_feature_value(api_f, api_f.case, 'case', 'ק', word)
-        gender_value = get_feature_value(api_f, api_f.gender, 'gender', 'ג', word)
-        person_value = get_feature_value(api_f, api_f.person, 'person', 'פ' ,word)
+        case_value = get_feature_value(api_f, api_f.case, 'case', '💼', word)
+        gender_value = get_feature_value(api_f, api_f.gender, 'gender', '☼', word)
+        person_value = get_feature_value(api_f, api_f.person, 'person', '🧍' ,word)
+        person_value = get_feature_value(api_f, api_f.number, 'number', 'ℕ',word)
 
         return case_value + gender_value + person_value
     
-    def retreive_mood_sp_tense_morph(api_f, word: str) -> str:
+    def retreive_mood_sp_tense(api_f, word: str) -> str:
 
-        mood_value = get_feature_value(api_f, api_f.mood, 'mood', word)
-        sp_value = get_feature_value(api_f, api_f.sp, 'sp', word)
-        tense_value = get_feature_value(api_f, api_f.tense, 'tense', word)
-        morph_value = get_feature_value(api_f, api_f.morph, 'morph', word)
+        mood_value = get_feature_value(api_f, api_f.mood, 'mood', '⚙', word)
+        sp_value = get_feature_value(api_f, api_f.sp, 'sp', '✎',  word)
+        tense_value = get_feature_value(api_f, api_f.tense, 'tense', '⏱',  word)
+        # morph_value = get_feature_value(api_f, api_f.morph, 'morph', word)
 
-        return mood_value + sp_value + tense_value + morph_value
+        return mood_value + sp_value + tense_value; # + morph_value
+
+    # if lemma equals 'normalized', change it to samek (Hebrew letter) to save space
+    def get_lemma_value(api_f, word: str, normalized: str) -> str:
+        # fix against lemma error with 'replace'; using Heberew 'lamed' character to tell AI that this is a separate 'lemma' entity value. ":" is a category separator for AI.
+        value = api_f.lemma.v(word).replace(' ', '')
+        value = '≡' if value == normalized else value
+        return f"✂:{value}"
 
     # region preparing return blocks
     # using Heberew 'nun' character to tell AI that this is a separate 'normalized' entity value. ":" is a category separator for AI.
-    n = f"נ:{api_f.normalized.v(word)}" 
+    normalized = api_f.normalized.v(word)
+    n = f"🧭:{normalized}" 
+    l = get_lemma_value(api_f, word, normalized)
 
-    # fix against lemma error with 'replace'; using Heberew 'lamed' character to tell AI that this is a separate 'lemma' entity value. ":" is a category separator for AI.
-    l = f"ל:{api_f.lemma.v(word).replace(" ", "")}" 
-
-    cgp = retreive_case_gender_person(api_f, word)
-    # mstm = retreive_mood_sp_tense_morph(api_f, word)
+    cgpn = retreive_case_gender_person_number(api_f, word)
+    mst = retreive_mood_sp_tense(api_f, word) # morph is not needed as it repeats other features
     # endregion
 
     # res = nmt + llt + cgp + mstm
-    res = n + l + cgp
+    res = n + l + cgpn + mst
 
     return res
 

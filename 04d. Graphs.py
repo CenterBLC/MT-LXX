@@ -41,6 +41,7 @@ data = [ # nr. 4 and 6 and 8 are out of the game (in blue or commented out)
     # {'name': 'nmt+llt+cgp',   'Fscore': 94.20, 'Precision': 93.08, 'Recall': 95.34, 'description': "nmt+llt+cgp:    ... Followed by case, gender, person (ΒBίiβbλlοoςs_βbίiβbλlοoςs_nominative_feminine)", "color":"blue"},
     {'name': 'nlcgpS',        'Fscore': 94.55, 'Precision': 92.95, 'Recall': 96.21, 'description': "nlcgpS: norm + lemma + case + gender + person Signed (נ:Χριστοῦל:Χριστόςק:genג:mas)"},
     {'name': 'NLCM',          'Fscore': 94.63, 'Precision': 93.32, 'Recall': 95.97, 'description': "NLCM:           ... Followed by mood, sp, tense, morph (ἐeπpοoίiηeσsεeνn_πpοoιiέeωo_p_3_indicative_verbaoristV-AAI-3S)"},
+    {'name': 'nlcgpnmst',     'Fscore': 95.17, 'Precision': 94.02, 'Recall': 96.35, 'description': "nlcgpnmst:      norm_lemma_case_gender_person_number_mood_sp_tense (🧭:ἐγέννησεν✂:γεννάωℕ:①⚙:●✎:→⏱:◆)"},
     {'name': 'IDEAL',         'Fscore': 100.00, 'Precision': 100.00, 'Recall': 100.00, 'description': ""}
 ]
 

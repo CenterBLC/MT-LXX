@@ -1,3 +1,6 @@
+#%%
+# !!! AI Training on the A=>B files created by this module must be run within the SSI_morphology_serg module. The latter contains necessary modifications. 
+
 # %% import use
 from tf.app import use
 

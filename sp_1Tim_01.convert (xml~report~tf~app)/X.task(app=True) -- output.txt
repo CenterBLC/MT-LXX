@@ -1,6 +1,0 @@
-App updating ...
-	~/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/app/static/logo.png (copied)
-	~/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/app/static/display.css (created)
-	~/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/app/config.yaml (created)
-	~/TF.Convert.XML_BackEnd/sergpanf/LXX-Link/app/app.py (deleted)
-Done

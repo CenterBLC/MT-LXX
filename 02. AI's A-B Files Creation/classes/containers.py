@@ -1,17 +1,9 @@
 """Containers module."""
 
-import importlib
-from typing import TYPE_CHECKING
 from dependency_injector import containers, providers
-from . import services
-# from . import Tester13
-
-from . import Tester13
-importlib.reload(Tester13)
-
-# if TYPE_CHECKING:
-#     from . import Kapka
-#     # from . import IDataProcessor, DataProcessor
+import classes.services as services
+import classes.Tester13 as Tester13
+import classes.DataProcessor as DataProcessor
 
 class Container(containers.DeclarativeContainer):
 
@@ -46,25 +38,20 @@ class Container(containers.DeclarativeContainer):
 
     # )
 
-    # dataProcessorFactory = providers.Singleton(
-    #     IDataProcessor,
-    #     DataProcessor()
-    # )
+    IDataProcessorFactory = providers.Dependency(instance_of=DataProcessor.IDataProcessor)
+    DataProcessorFactory = providers.Singleton(DataProcessor.DataProcessor)
+    IDataProcessorFactory.override(DataProcessorFactory)
 
-    
-
-    mtlxxServiceFactory = providers.Singleton(
+    MTLXXServiceFactory = providers.Singleton(
         services.MTLXXService
     )
 
-    kapkaFactory = providers.Singleton(
+    # A Singleton lazily creates the object once and then always returns the same instance on every call.
+    KapkaFactory = providers.Singleton(
         Tester13.Kapka
     )
 
-    # dataProcessorFactory = providers.Singleton(
-    #     DataProcessor.DataProcessor
-    # )
-
-    tester13Factory = providers.Factory(
+    # A Factory lazily creates a new instance of the class each time the factory is called
+    Tester13Factory = providers.Factory(
         Tester13.Tester13
     )

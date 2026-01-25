@@ -1,52 +1,35 @@
 """Main module."""
 
-from __future__ import annotations
-
-import sys
-import importlib
-from typing import TYPE_CHECKING
-
 from dependency_injector.wiring import Provide, inject
 
-# works
-# from classes.services import MTLXXService
-import classes.services
-from classes.containers import Container
+import classes.services as services
+import classes.containers as containers
+import classes.Tester13 as Tester13
+import classes.DataProcessor as DataProcessor
 
-# if TYPE_CHECKING:
-# from classes.Tester13 import Kapka
-import classes.Tester13
-importlib.reload(classes.Tester13)
-from classes.DataProcessor import IDataProcessor
-
-
-
-# works
-# @inject
-# def main(
-#         # email: str,
-#         # password: str,
-#         # photo: str,
-#         mtlxxService: MTLXXService = Provide[Container.mtlxxService],
-# ) -> None:
-#     #  mtlxxService.generate_input_file('my_file_name')
-#     mtlxxService.do()
+# in case changes are not picked-up, use this workaround
+# import importlib
+# importlib.reload(classes.Tester13)
 
 @inject
 def main(
-        # works
-        mtlxxService: classes.services.MTLXXService = Provide[Container.mtlxxServiceFactory]
-        , tester13: classes.Tester13.Tester13 = Provide[Container.tester13Factory]
-        , kapka: classes.Tester13.Kapka = Provide[Container.kapkaFactory]
-        # , dataProcessor: IDataProcessor = Provide[Container.dataProcessorFactory]
+        mtlxxService: services.MTLXXService = Provide[containers.Container.MTLXXServiceFactory]
+        , tester13: Tester13.Tester13 = Provide[containers.Container.Tester13Factory]
+        , tester13_2: Tester13.Tester13 = Provide[containers.Container.Tester13Factory]
+        , kapka: Tester13.Kapka = Provide[containers.Container.KapkaFactory]
+        , iDataProcessor: DataProcessor.IDataProcessor = Provide[containers.Container.IDataProcessorFactory]
 ) -> None:
     mtlxxService.do()
     tester13.do13()
+    tester13_2.do13()
+    print ("tester13 == tester13_2: " + str(tester13 == tester13_2)) # 
     kapka.kkk('aaa')
-    # dataProcessor.process('haha')
-
+    iDataProcessor.process('interfaced haha')
+    print (isinstance(iDataProcessor, DataProcessor.IDataProcessor)) # true
+    print (isinstance(iDataProcessor, DataProcessor.DataProcessor)) # true
+    
 if __name__ == "__main__":
-    container = Container()
+    container = containers.Container()
     container.init_resources()
     container.wire(modules=[__name__])
 

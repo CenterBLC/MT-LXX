@@ -6,9 +6,9 @@ DataProcessor - dummy class for testing purposes
 class IDataProcessor (ABC): 
     @abstractmethod
     def process(self, data) -> None:
-        pass
+        print ("Abstract Processing:" + data)
 
 class DataProcessor(IDataProcessor):
     """Concrete implementation of IDataProcessor."""
     def process(self, data):
-        return f"Processing: {data}"
+        print ("Concrete Processing:" + data)

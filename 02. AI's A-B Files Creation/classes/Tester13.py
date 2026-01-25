@@ -1,8 +1,3 @@
-# from classes.DI.services import MTLXXService
-
-
-
-
 class Tester13:
     # def __init__(self, mtlxxService: MTLXXService):
     #     self._mtlxxService = mtlxxService
@@ -14,3 +9,4 @@ class Tester13:
 class Kapka:
     def kkk(self, a):
         print("I am kapka." + a)
+

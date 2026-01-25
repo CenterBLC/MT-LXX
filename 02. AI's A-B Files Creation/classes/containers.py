@@ -5,6 +5,8 @@ import classes.services as services
 import classes.Tester13 as Tester13
 import classes.DataProcessor as DataProcessor
 
+import classes.GNTWrapper as GNTWrapper
+
 class Container(containers.DeclarativeContainer):
 
     # config = providers.Configuration(ini_files=["config.ini"])
@@ -37,6 +39,10 @@ class Container(containers.DeclarativeContainer):
     # fileWriter = providers.Singleton(
 
     # )
+
+    GNTWrapperFactory = providers.Singleton(
+        GNTWrapper.GNTWrapper
+    )
 
     IDataProcessorFactory = providers.Dependency(instance_of=DataProcessor.IDataProcessor)
     DataProcessorFactory = providers.Singleton(DataProcessor.DataProcessor)

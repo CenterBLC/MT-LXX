@@ -30,6 +30,11 @@ class Settings():
     @property
     def data_level(self) -> DataLevel:
         return self._data_level
+    @data_level.setter
+    def data_level(self, value):
+        if isinstance(value, str):
+            value = DataLevel[value]
+        self._data_level = value
     
     @property
     def fileA_merge_mode(self) -> FileAMergeMode:

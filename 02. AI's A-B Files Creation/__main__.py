@@ -17,19 +17,35 @@ def main(
         # , file_A_Generator: File_A_Generator.File_A_Generator = Provide[containers.Container.File_A_Generator]
 ) -> None:
     
+    settings = manager.settings
     gnt_wrapper = manager.gnt_wrapper
-    fileA_Generator = manager.fileA_generator
+    fileA_generator = manager.fileA_generator
+    fileB_generator = manager.fileB_generator
+
 
     print("MT-LXX  App ready. Type 'help' for commands, 'quit' to exit.")
 
-    fileA_Generator.generate()
-    print("external report: file A generated.")
+    fileB_generator.generate()
+    print("external report: file B generated.")
 
     while True:
         cmd = input(">> ").strip()
-        if cmd == "gen A":
-            fileA_Generator.generate()
+        if cmd.lower() == "gen a":
+            fileA_generator.generate()
             print("external report: file A generated.")
+            continue
+        if cmd.lower() == "gen b":
+            fileB_generator.generate()
+            print("external report: file B generated.")
+            continue
+        if cmd.startswith("datalevel "):
+            q = cmd[len("datalevel "):]
+            settings.data_level = q
+            print(f"DataLevel is set to {q}")
+            continue
+        if cmd.lower() == "datalevel nt_book":
+            fileB_generator.generate()
+            print("external report: file B generated.")
             continue
         # if cmd == "reload gnt": # this works, but architecturally is probably wrong. To reload, just restart main. 
         #     import importlib

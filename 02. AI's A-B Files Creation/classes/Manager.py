@@ -1,10 +1,10 @@
 """Manager module."""
 from .Settings import Settings
 from .file_generators.FileA_Generator import FileA_Generator
-# from .FileB_Generator import FileB_Generator
+from .file_generators.FileB_Generator import FileB_Generator
 from .GNTWrapper import GNTWrapper
 from .FeatureMerger import FeatureMerger
-from .FileWriter import FileWriter
+# from classes.file_writers.FileWriter import FileWriter
 
 class Manager():
 
@@ -12,16 +12,16 @@ class Manager():
         self._gnt_wrapper: GNTWrapper = None
         self._settings: Settings = None
         self._fileA_generator: FileA_Generator = None
-        # self._fileB_Generator: FileB_Generator = None
+        self._fileB_generator: FileB_Generator = None
         self._feature_merger: FeatureMerger = None
-        self._file_writer: FileWriter = None
+        # self._file_writer: FileWriter = None
         
     
-    @property
-    def file_writer(self) -> FileWriter:
-        if self._file_writer is None:
-            self._file_writer = FileWriter(self)
-        return self._file_writer
+    # @property
+    # def file_writer(self) -> FileWriter:
+    #     if self._file_writer is None:
+    #         self._file_writer = FileWriter(self)
+    #     return self._file_writer
 
     @property
     def feature_merger(self) -> FeatureMerger:
@@ -29,11 +29,11 @@ class Manager():
             self._feature_merger = FeatureMerger(self)
         return self._feature_merger
 
-    # @property
-    # def fileB_generator(self) -> FileB_Generator:
-    #     if self._fileB_generator is None:
-    #         self._fileB_generator = FileB_Generator(self)
-    #     return self._fileB_generator
+    @property
+    def fileB_generator(self) -> FileB_Generator:
+        if self._fileB_generator is None:
+            self._fileB_generator = FileB_Generator(self)
+        return self._fileB_generator
 
     @property
     def fileA_generator(self) -> FileA_Generator:

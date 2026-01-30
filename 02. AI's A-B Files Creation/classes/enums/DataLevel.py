@@ -6,4 +6,4 @@ class DataLevel(Enum):
 
     def __str__(self) -> str:
         # return self.name.replace("_", " ").title()
-        return "NT" if self.name is DataLevel.NEW_TESTAMENT else "BOOK"
+        return "NT" if (self is DataLevel.NEW_TESTAMENT) else "BOOK"

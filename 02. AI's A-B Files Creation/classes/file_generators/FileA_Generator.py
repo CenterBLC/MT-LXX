@@ -4,39 +4,20 @@ if TYPE_CHECKING:
 
 from .FileGeneratorAbstract import FileGeneratorAbstract
 
-# from .GNTWrapper import GNTWrapper
 from classes.FeatureMerger import FeatureMerger
-# from .FileWriter import FileWriter
 from classes.enums.DataLevel import DataLevel
-
-# from tf.core.nodefeature import NodeFeatures
-# from tf.core.locality import Locality
-# from tf.core.text import Text
+from classes.file_writers.FileA_Writer import FileA_Writer
+from classes.file_writers.FileWriterAbstract import FileWriterAbstract
 
 class FileA_Generator(FileGeneratorAbstract):
 
     def __init__(self, manager: "Manager") -> None:
         super().__init__(manager)
-        # self._gnt_wrapper: GNTWrapper = manager.gnt_wrapper
         self._feature_merger: FeatureMerger = manager.feature_merger
-        # self._data_level: DataLevel = manager.settings.data_level
-        # self._selected_book: str = manager.settings.selected_book
-        # self._file_writer: FileWriter = manager.file_writer
-    
-    # @property
-    # def F(self) -> NodeFeatures:
-    #     return self._gnt_wrapper.F
-    
-    # @property
-    # def L(self) -> Locality:
-    #     return self._gnt_wrapper.L
-    
-    # @property
-    # def T(self) -> Text:
-    #     return self._gnt_wrapper.T
+        self._file_writer: FileWriterAbstract = FileA_Writer(manager)
     
     def generate(self) -> None:
-
+        
         i=0
         file_contents=[]
         # outputfile_suffix = '_normalized'
@@ -47,9 +28,9 @@ class FileA_Generator(FileGeneratorAbstract):
             bo, ch, ve = self.T.sectionFromNode(verse)
             final = "\t".join([bo, str(ch), str(ve), text.strip()])
 
-            if (self._data_level is DataLevel.NEW_TESTAMENT 
+            if (self.data_level is DataLevel.NEW_TESTAMENT 
                     or 
-                    (self._data_level is DataLevel.NT_BOOK
+                    (self.data_level is DataLevel.NT_BOOK
                         and bo == self._selected_book)
                 ):
 

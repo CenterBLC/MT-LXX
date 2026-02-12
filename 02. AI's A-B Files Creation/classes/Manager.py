@@ -4,6 +4,7 @@ from .file_generators.FileA_Generator import FileA_Generator
 from .file_generators.FileB_Generator import FileB_Generator
 from .GNTWrapper import GNTWrapper
 from .FeatureMerger import FeatureMerger
+# from .file_generators.fileB.WordsAllocationToPhrases import WordsAllocationToPhrases
 # from classes.file_writers.FileWriter import FileWriter
 
 class Manager():
@@ -14,14 +15,14 @@ class Manager():
         self._fileA_generator: FileA_Generator = None
         self._fileB_generator: FileB_Generator = None
         self._feature_merger: FeatureMerger = None
-        # self._file_writer: FileWriter = None
+        # self._words_allocation_to_phrases: WordsAllocationToPhrases = None
         
     
     # @property
-    # def file_writer(self) -> FileWriter:
-    #     if self._file_writer is None:
-    #         self._file_writer = FileWriter(self)
-    #     return self._file_writer
+    # def words_allocation_to_phrases(self) -> WordsAllocationToPhrases:
+    #     if self._words_allocation_to_phrases is None:
+    #         self._words_allocation_to_phrases = WordsAllocationToPhrases(self)
+    #     return self._words_allocation_to_phrases
 
     @property
     def feature_merger(self) -> FeatureMerger:

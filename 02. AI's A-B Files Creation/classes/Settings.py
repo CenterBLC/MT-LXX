@@ -12,7 +12,7 @@ class Settings():
         # Matthew
         self._selected_book: str = 'III_John'
         self._fileA_merge_mode: FileAMergeMode = FileAMergeMode.NLCGPNMST
-        self._fileB_display_mode: FileBDisplayMode = FileBDisplayMode.CODED
+        self._fileB_display_mode: FileBDisplayMode = FileBDisplayMode.COMPRESSED
         self._path_folder: str = "sp_data_gnt"
 
     @property

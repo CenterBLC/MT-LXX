@@ -43,16 +43,6 @@ def main(
             settings.data_level = q
             print(f"DataLevel is set to {q}")
             continue
-        if cmd.lower() == "datalevel nt_book":
-            fileB_generator.generate()
-            print("external report: file B generated.")
-            continue
-        # if cmd == "reload gnt": # this works, but architecturally is probably wrong. To reload, just restart main. 
-        #     import importlib
-        #     importlib.reload(GNTWrapper)
-        #     gntWrapper = GNTWrapper.GNTWrapper()
-        #     print(f"GNTWrapper was reloaded.")
-        #     continue
         if cmd == "gnt":
             value = getattr(gnt_wrapper, "temp_ClassName", None)
             print(f"gntWrapper.temp_ClassName is {value!r}")

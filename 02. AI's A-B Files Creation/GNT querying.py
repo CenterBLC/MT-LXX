@@ -41,15 +41,14 @@ for i in range(266536, 266549): # range for Mat 1:1
 #displayReset(GNT)
 loadCss(GNT)
 
-
-John1_1 = '''
-book book=John
+query = '''
+book book=III_John
  chapter chapter=1 
-   verse verse=1
+   verse verse=9
     word lemma
 '''
-John1_1  = GNT.search(John1_1)
-GNT.show(John1_1, start=1, end=1, multiFeatures=False, condensed=True)
+query  = GNT.search(query)
+GNT.show(query, start=1, end=1, multiFeatures=False, condensed=True, withNodes=True)
 
 
 # %% 🔹 1. Verify that clause nodes really exist

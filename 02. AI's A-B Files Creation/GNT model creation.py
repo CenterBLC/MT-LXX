@@ -124,9 +124,13 @@ def to_groups_of_uninterrupted_sequences_present_or_missing_in (sequence_of_word
         groups.append(current_group)
     return groups
 
-def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words must be uninterrupted sequence of integers 
+# sequence_of_words must be uninterrupted sequence of integers 
+def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence_of_words): 
 
-    if (len(sequence_of_words) > 0) and any(word in unused_words_ofthe_verse for word in sequence_of_words): # only the words that are still unused can be used for building new sub-phrases. they could have been used previously for building new-subphrases in the cases of phrases within breaking-phrases of GNT.
+    # only the words that are still unused can be used for building new sub-phrases. 
+    # they could have been used previously for building new-subphrases in the cases of phrases 
+    # within breaking-phrases of GNT.
+    if (len(sequence_of_words) > 0) and any(word in unused_words_ofthe_verse for word in sequence_of_words): 
     # chk: should  "any" function be used here or "all" function?
     
         if (MODUS == 'clear'):
@@ -143,7 +147,8 @@ def add_sequential_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence
 
     return verse_text,unused_words_ofthe_verse
 
-def add_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence_of_words): # sequence_of_words can be interrupted sequence of integers, as can happen within a phrase
+# sequence_of_words can be interrupted sequence of integers, as can happen within a phrase
+def add_chunk_to_verse(verse_text, unused_words_ofthe_verse, sequence_of_words): 
 
     if (len(sequence_of_words) > 0):
 
@@ -219,6 +224,7 @@ def handle_book(book, i):
         verse_text, unused_words_ofthe_verse = process_rightSided_final_orphans_ifAny(verse_text, unused_words_ofthe_verse)
 
         verse_text = verse_text.strip()
+        
         bo, ch, ve = GNT.api.T.sectionFromNode(verse)
         final = "\t".join([bo, str(ch), str(ve), verse_text.strip()])
 

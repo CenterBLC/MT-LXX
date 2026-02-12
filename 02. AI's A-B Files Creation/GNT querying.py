@@ -42,9 +42,9 @@ for i in range(266536, 266549): # range for Mat 1:1
 loadCss(GNT)
 
 query = '''
-book book=III_John
- chapter chapter=1 
-   verse verse=9
+book book=Matthew
+ chapter chapter=2 
+   verse verse=18
     word lemma
 '''
 query  = GNT.search(query)

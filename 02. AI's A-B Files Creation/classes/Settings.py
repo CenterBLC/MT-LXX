@@ -7,7 +7,7 @@ from .enums.FileBDisplayMode import FileBDisplayMode
 class Settings():
     
     def __init__(self):
-        self._data_level: DataLevel = DataLevel.NT_BOOK
+        self._data_level: DataLevel = DataLevel.NEW_TESTAMENT
         # III_John
         # Matthew
         self._selected_book: str = 'III_John'

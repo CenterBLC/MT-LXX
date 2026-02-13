@@ -62,9 +62,9 @@ def main(
         print("Unknown command. Type 'help'.")
 
     
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    manager = Manager()
-    
-    # main(*sys.argv[1:])
-    main(manager)
+manager = Manager()
+
+# main(*sys.argv[1:])
+main(manager)

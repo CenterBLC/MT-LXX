@@ -1,35 +1,7 @@
-# %% example of multi-y plot
-import matplotlib.pyplot as plt
-
-x1 = [0,1,2,3,4,5]
-y1 = [0,1,4,9,16,25]      # quadratic
-y2 = [0,1,2,3,4,5]        # linear
-y3 = [0,10,100,1000,10000,100000]  # exponential
-
-fig, ax1 = plt.subplots()
-
-ax2 = ax1.twinx()   # second y-axis
-ax3 = ax1.twinx()   # third y-axis
-
-# Offset the third axis to the right
-ax3.spines["right"].set_position(("axes", 1.2))
-
-ax1.plot(x1, y1, 'b-')
-ax2.plot(x1, y2, 'g-')
-ax3.plot(x1, y3, 'r-')
-
-ax1.set_xlabel("X axis")
-ax1.set_ylabel("y1 quadratic", color='b')
-ax2.set_ylabel("y2 linear", color='g')
-ax3.set_ylabel("y3 exponential", color='r')
-
-plt.show()
-
-# %% F-Scores visualization
+# %%
 import matplotlib.pyplot as plt
 
 # %%
-
 data = [ # nr. 4 and 6 and 8 are out of the game (in blue or commented out)
     {'name': 'normalized',    'Fscore': 93.20, 'Precision': 91.77, 'Recall': 94.67, 'description': "normalized:     Accented Greek Text (βίβλος)"},
     {'name': 'translit',      'Fscore': 91.71, 'Precision': 89.39, 'Recall': 94.14, 'description': "translit:       Transliteration, Non-Accented (Biblos)", "color": "gray"},
@@ -42,6 +14,7 @@ data = [ # nr. 4 and 6 and 8 are out of the game (in blue or commented out)
     {'name': 'nlcgpS',        'Fscore': 94.55, 'Precision': 92.95, 'Recall': 96.21, 'description': "nlcgpS: norm + lemma + case + gender + person Signed (נ:Χριστοῦל:Χριστόςק:genג:mas)"},
     {'name': 'NLCM',          'Fscore': 94.63, 'Precision': 93.32, 'Recall': 95.97, 'description': "NLCM:           ... Followed by mood, sp, tense, morph (ἐeπpοoίiηeσsεeνn_πpοoιiέeωo_p_3_indicative_verbaoristV-AAI-3S)"},
     {'name': 'nlcgpnmst',     'Fscore': 95.17, 'Precision': 94.02, 'Recall': 96.35, 'description': "nlcgpnmst:      norm_lemma_case_gender_person_number_mood_sp_tense (🧭:ἐγέννησεν✂:γεννάωℕ:①⚙:●✎:→⏱:◆)"},
+    {'name': 'OOP-A/B-upd',     'Fscore': 95.56, 'Precision': 94.70, 'Recall': 96.43, 'description': "OOP-A/B-upd:      First OOP version with higher quality (debugged) A- and B-files)"},
     {'name': 'IDEAL',         'Fscore': 100.00, 'Precision': 100.00, 'Recall': 100.00, 'description': ""}
 ]
 
@@ -80,9 +53,9 @@ ax3.set_ylabel("Recall", color='r')
 # --- Add Y-values above each point ---  
 # --- Add Y-values with different offsets ---
 offsets = {
-    "A": -0.5,      # offset for F-Score
-    "B": 0,         # offset for Precision
-    "C": 0.75       # offset for Recall
+    "A": -0.6,      # offset for F-Score
+    "B": -2.5,         # offset for Precision
+    "C": -0.75       # offset for Recall
 }
 
 for x, y in zip(x1, y1):
@@ -98,4 +71,6 @@ description = "\n".join(item["description"] for item in data if item["descriptio
 
 plt.figtext(0.0, -0.1, description, wrap=True, ha="left", va="top", fontsize=9)
 plt.show()
+
+
 # %%

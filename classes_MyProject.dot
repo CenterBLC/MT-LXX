@@ -1,5 +1,0 @@
-digraph "classes_MyProject" {
-rankdir=BT
-charset="utf-8"
-"classes.Settings.Settings" [color="black", fontcolor="black", label=<{Settings|data_level : DataLevel<br ALIGN="LEFT"/>fileA_merge_mode : FileAMergeMode<br ALIGN="LEFT"/>fileB_display_mode : FileBDisplayMode<br ALIGN="LEFT"/>path_folder : str<br ALIGN="LEFT"/>selected_book : str<br ALIGN="LEFT"/>|}>, shape="record", style="solid"];
-}

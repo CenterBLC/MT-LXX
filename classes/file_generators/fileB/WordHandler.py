@@ -32,7 +32,7 @@ class WordHandler():
         # self._is_only_in_onePhrase_but_not_otherPhrase: bool = None
         self._is_mostRight_in_a_nonPhrased_word_sequence: bool = None
         self._is_lastWord_before_phraseRupture: bool = None
-        self._is_lastWord_before_additionalPhraseAppears: bool = None
+        self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears: bool = None
         
         
     
@@ -48,9 +48,10 @@ class WordHandler():
                 "Y" 
                 if self.is_mostRight_element_in_aPhrase # standard requirement
                     or (self.is_without_phrase and self.is_mostRight_in_a_nonPhrased_word_sequence) # e.g., 3 John 1:1: Γαΐῳ τῷ ἀγαπητῷ would otherwise create 'YYY' instead of 'XXY'
-                    # or self.is_only_in_onePhrase_but_not_otherPhrase # e.g., 3 John 1:9??? don't remember
+                    # or self.is_only_in_onePhrase_but_not_otherPhrase # e.g., 3 John 1:9??? don't remember -- but this is a confirmed superflous condition which is probably covered by other conditions
                     or self.is_lastWord_before_phraseRupture # e.g., 3 John 1:4: phrase:254291 (word: 127310) μειζοτέραν (Y) -- ... -- χαράν
-                    or self.is_lastWord_before_additionalPhraseAppears # e.g., 3 John 1:9 phrase 254330 (word 127376) ὁ (Y) 
+                    or self.is_inside_phrase_but_lastWord_before_additionalPhraseAppears # e.g., 3 John 1:9 phrase 254330 (word 127376) ὁ (Y) 
+
                 else "X"
             )
         return self._compressedView
@@ -69,16 +70,22 @@ class WordHandler():
         return self._subsequent_wordHandler
 
     @property
-    def is_lastWord_before_additionalPhraseAppears(self) -> bool:
-        if self._is_lastWord_before_additionalPhraseAppears is None:
+    def is_inside_phrase_but_lastWord_before_additionalPhraseAppears(self) -> bool:
+        if self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears is None:
+            # first, ruling out scenarios that are not relevant for this property
             if (self.is_without_phrase): 
-                self._is_lastWord_before_additionalPhraseAppears = False
+                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
+            elif (self.subsequent_wordHandler is None):
+                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
+            elif (self.is_mostRight_element_in_aPhrase):
+                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
+            # finally, calculating the property
             else:
-                self._is_lastWord_before_additionalPhraseAppears = (
+                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = (
                     len(self.subsequent_wordHandler.containing_phraseHandlers) >
                     len(self.containing_phraseHandlers)
                 )
-        return self._is_lastWord_before_additionalPhraseAppears
+        return self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears
 
     @property
     def is_lastWord_before_phraseRupture(self) -> bool:

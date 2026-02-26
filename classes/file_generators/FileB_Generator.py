@@ -9,7 +9,7 @@ from classes.enums.FileBDisplayMode import FileBDisplayMode
 from classes.file_writers.FileB_Writer import FileB_Writer
 from classes.file_writers.FileWriterAbstract import FileWriterAbstract
 
-from .fileB.BookHandler import BookHandler
+from .fileB.GntBookHandler import GntBookHandler
 
 class FileB_Generator(FileGeneratorAbstract):
     
@@ -32,7 +32,7 @@ class FileB_Generator(FileGeneratorAbstract):
                         and book_name == self._selected_book)
                 ):
 
-                book_handler: BookHandler = BookHandler(self._manager, book_id, book_name)
+                book_handler: GntBookHandler = GntBookHandler(self._manager, book_id, book_name)
                 file_content: list[str] = book_handler.get_transformed_content()
                 all_files_content.extend(file_content)
         

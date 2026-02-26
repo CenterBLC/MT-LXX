@@ -1,26 +1,26 @@
 from typing import TYPE_CHECKING
 
-from classes.GNTWrapper import GNTWrapper
-from .PhraseHandler import PhraseHandler
+from classes.GntApiWrapper import GntApiWrapper
+from .GntPhraseHandler import GntPhraseHandler
 from .WordHandler import WordHandler
 from classes.enums.FileBDisplayMode import FileBDisplayMode
 
 if TYPE_CHECKING:
     from classes.Manager import Manager
 
-class VerseHandler():
+class GntVerseHandler():
 
     def __init__(self, manager: "Manager", verse_id: str) -> None:
         self._manager: "Manager" = manager
-        self._gnt_wrapper: GNTWrapper = manager.gnt_wrapper
+        self._gnt_wrapper: GntApiWrapper = manager.gnt_wrapper
         self._verse_id: str = verse_id
-        self._phrases: tuple[int] = None
+        self._gnt_phrases: tuple[int] = None
         self._words: tuple[int] = None
         self._wordHandlers: tuple[WordHandler] = None
-        self._phraseHandlers: tuple[PhraseHandler] = None
+        self._gntPhraseHandlers: tuple[GntPhraseHandler] = None
 
-        self._nonPhrased_wordHandlers_calculated: bool = False
-        self._nonPhrased_wordHandlers: tuple[WordHandler] = None
+        self._nonGntPhrased_wordHandlers_calculated: bool = False
+        self._nonGntPhrased_wordHandlers: tuple[WordHandler] = None
         # self._unused_words: list[int] = None
 
     def get_transformed_content(self) -> str:
@@ -44,12 +44,12 @@ class VerseHandler():
         return res
     
     @property
-    def phraseHandlers(self) -> tuple[PhraseHandler]:
-        if self._phraseHandlers is None:
-            self._phraseHandlers = tuple(
-                PhraseHandler(self._manager, phrase_id) for phrase_id in self.phrases
+    def gntPhraseHandlers(self) -> tuple[GntPhraseHandler]:
+        if self._gntPhraseHandlers is None:
+            self._gntPhraseHandlers = tuple(
+                GntPhraseHandler(self._manager, phrase_id) for phrase_id in self.gntPhrases
             )
-        return self._phraseHandlers
+        return self._gntPhraseHandlers
     
     @property
     def wordHandlers(self) -> tuple[WordHandler]:
@@ -62,12 +62,12 @@ class VerseHandler():
             self._wordHandlers = tuple(res)
         return self._wordHandlers
 
-    def getContaining_phraseHandlers(self, word_id: int) -> tuple[WordHandler]:
-        containing_phraseHandlers = tuple(
-                    phrase_handler for phrase_handler in self.phraseHandlers 
+    def getContaining_gntPhraseHandlers(self, word_id: int) -> tuple[WordHandler]:
+        containing_gntPhraseHandlers = tuple(
+                    phrase_handler for phrase_handler in self.gntPhraseHandlers 
                     if word_id in phrase_handler.words
                 ) or None # returns None if the tuple is empty
-        return containing_phraseHandlers
+        return containing_gntPhraseHandlers
     
     def get_subsequent_wordHandler(self, word_id: int) -> WordHandler:
         return next(
@@ -76,31 +76,24 @@ class VerseHandler():
         )
     
     @property
-    def nonPhrased_wordHandlers(self) -> tuple[WordHandler]:
-        if not self._nonPhrased_wordHandlers_calculated:
+    def nonGntPhrased_wordHandlers(self) -> tuple[WordHandler]:
+        if not self._nonGntPhrased_wordHandlers_calculated:
         # if self._nonPhrased_words is None:
-            self._nonPhrased_wordHandlers = tuple(
+            self._nonGntPhrased_wordHandlers = tuple(
                     wh for wh in self.wordHandlers 
-                    if wh.phrasePosition.is_without_phrase
+                    if wh.gntSubphrasePosition.is_without_phrase
                 ) or None # returns None if the tuple is empty
-            self._nonPhrased_wordHandlers_calculated = True
-        return self._nonPhrased_wordHandlers
+            self._nonGntPhrased_wordHandlers_calculated = True
+        return self._nonGntPhrased_wordHandlers
 
     @property
-    def phrases(self) -> tuple[int]:
-        if self._phrases is None:
-            self._phrases = self._gnt_wrapper.L.d(self._verse_id, 'phrase')
-        return self._phrases
+    def gntPhrases(self) -> tuple[int]:
+        if self._gnt_phrases is None:
+            self._gnt_phrases = self._gnt_wrapper.L.d(self._verse_id, 'phrase')
+        return self._gnt_phrases
 
     @property
     def words(self) -> tuple[int]:
         if self._words is None:
             self._words = self._gnt_wrapper.L.d(self._verse_id, 'word')
         return self._words
-
-    # @property
-    # def unused_words(self) -> list[int]:
-    #     if self._unused_words is None:
-    #         self._unused_words = list(self.words)
-    #     return self._unused_words
-    

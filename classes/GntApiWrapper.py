@@ -6,7 +6,7 @@ from tf.core.nodefeature import NodeFeatures
 from tf.app import use
 from tf.advanced.app import App
 
-class GNTWrapper:
+class GntApiWrapper:
     def __init__(self):
         self._GNT: App = None
         self._F: NodeFeatures = None

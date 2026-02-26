@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from classes.Manager import Manager
 
-from classes.GNTWrapper import GNTWrapper
+from classes.GntApiWrapper import GntApiWrapper
 from classes.file_writers.FileWriterAbstract import FileWriterAbstract
 from classes.enums.DataLevel import DataLevel
 
@@ -15,7 +15,7 @@ class FileGeneratorAbstract(ABC):
 
     def __init__(self, manager: "Manager") -> None:
         self._manager: "Manager" = manager
-        self._gnt_wrapper: GNTWrapper = manager.gnt_wrapper
+        self._gnt_wrapper: GntApiWrapper = manager.gnt_wrapper
         # self.data_level: DataLevel = manager.settings.data_level
         self._selected_book: str = manager.settings.selected_book
         self._file_writer: FileWriterAbstract = None

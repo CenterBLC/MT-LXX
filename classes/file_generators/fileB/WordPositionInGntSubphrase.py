@@ -1,30 +1,32 @@
 from typing import TYPE_CHECKING
 
-from classes.GNTWrapper import GNTWrapper
-from .PhraseHandler import PhraseHandler
+from classes.GntApiWrapper import GntApiWrapper
+from .GntPhraseHandler import GntPhraseHandler
 
 if TYPE_CHECKING:
     from classes.Manager import Manager
-    from .VerseHandler import VerseHandler
+    from .GntVerseHandler import GntVerseHandler
     from .WordHandler import WordHandler
 
-class WordPositionInPhrase():
+class WordPositionInGntSubphrase():
 
     def __init__(self
                  , manager: "Manager"
                  , word_id: int
-                 , containing_verseHandler: "VerseHandler") -> None:
+                 , containing_verseHandler: "GntVerseHandler") -> None:
 
+        # assigning received objects        
         self._manager: "Manager" = manager
         self._word_id: int = word_id
-        self._containing_verseHandler: "VerseHandler" = containing_verseHandler
+        self._containing_verseHandler: "GntVerseHandler" = containing_verseHandler
 
+        # local objects
+        self._compressedView: str = None
         self._is_subsequent_wordHandler_calculated: bool = False
         self._subsequent_wordHandler: WordHandler = None
-        
-        self._containing_phraseHandlers: tuple[PhraseHandler] = None
+        self._containing_phraseHandlers: tuple[GntPhraseHandler] = None
         self._is_without_phrase: bool = None
-        self._is_mostRight_element_in_aPhrase: bool = None
+        self._is_mostRight_element_in_gntPhrase: bool = None
         self._is_mostRight_in_a_nonPhrased_word_sequence: bool = None
         self._is_lastWord_before_phraseRupture: bool = None
         self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears: bool = None
@@ -44,12 +46,12 @@ class WordPositionInPhrase():
                 self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
             elif (self.subsequent_wordHandler is None):
                 self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
-            elif (self.is_mostRight_element_in_aPhrase):
+            elif (self.is_mostRight_element_in_gntPhrase):
                 self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
             # finally, calculating the property
             else:
                 self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = (
-                    len(self.subsequent_wordHandler.phrasePosition.containing_phraseHandlers) >
+                    len(self.subsequent_wordHandler.gntSubphrasePosition.containing_phraseHandlers) >
                     len(self.containing_phraseHandlers)
                 )
         return self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears
@@ -68,15 +70,15 @@ class WordPositionInPhrase():
         return self._is_lastWord_before_phraseRupture
     
     @property
-    def is_mostRight_element_in_aPhrase(self) -> bool:
-        if self._is_mostRight_element_in_aPhrase is None:
-            self._is_mostRight_element_in_aPhrase = (
+    def is_mostRight_element_in_gntPhrase(self) -> bool:
+        if self._is_mostRight_element_in_gntPhrase is None:
+            self._is_mostRight_element_in_gntPhrase = (
                 self.containing_phraseHandlers is not None and any(
                     phrase_handler.words[-1] == int(self._word_id)
                     for phrase_handler in self.containing_phraseHandlers
                 )
             )
-        return self._is_mostRight_element_in_aPhrase
+        return self._is_mostRight_element_in_gntPhrase
     
     @property
     def is_without_phrase(self) -> bool:
@@ -93,20 +95,20 @@ class WordPositionInPhrase():
                 self._is_mostRight_in_a_nonPhrased_word_sequence = not ( #negation
                     any(# there is a non-phrased word to the right of the current word
                         wh._word_id == self._word_id + 1
-                        for wh in self._containing_verseHandler.nonPhrased_wordHandlers
+                        for wh in self._containing_verseHandler.nonGntPhrased_wordHandlers
                     )
                 )
         return self._is_mostRight_in_a_nonPhrased_word_sequence
     
     @property
-    def containing_phraseHandlers(self) -> tuple[PhraseHandler]:
+    def containing_phraseHandlers(self) -> tuple[GntPhraseHandler]:
         """
         Phrase handlers could be calculated through 
         phrases = L.u(w, otype='phrase')
         But creating phrase handlers by the parent Verse object ensures there is only one Phrase Handler instance per phrase across all objects
         """
         if self._containing_phraseHandlers is None:
-            self._containing_phraseHandlers = self._containing_verseHandler.getContaining_phraseHandlers(self._word_id)
+            self._containing_phraseHandlers = self._containing_verseHandler.getContaining_gntPhraseHandlers(self._word_id)
             # raise Exception('_containing_phraseHandlers are expected to be supplied through the constructor')
         return self._containing_phraseHandlers
     

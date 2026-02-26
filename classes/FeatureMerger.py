@@ -1,5 +1,5 @@
 # from classes.Manager import Manager
-from .GNTWrapper import GNTWrapper
+from .GntApiWrapper import GntApiWrapper
 from .enums.FileAMergeMode import FileAMergeMode
 
 from tf.core.nodefeature import NodeFeatures
@@ -9,7 +9,7 @@ class FeatureMerger():
     def __init__(self, manager):
         # self._manager = manager
         self._fileA_merge_mode: FileAMergeMode = manager.settings.fileA_merge_mode
-        self._gnt_wrapper: GNTWrapper = manager.gnt_wrapper
+        self._gnt_wrapper: GntApiWrapper = manager.gnt_wrapper
     
     @property
     def F(self) -> NodeFeatures:

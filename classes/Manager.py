@@ -2,7 +2,7 @@
 from .Settings import Settings
 from .file_generators.FileA_Generator import FileA_Generator
 from .file_generators.FileB_Generator import FileB_Generator
-from .GNTWrapper import GNTWrapper
+from .GntApiWrapper import GntApiWrapper
 from .FeatureMerger import FeatureMerger
 # from .file_generators.fileB.WordsAllocationToPhrases import WordsAllocationToPhrases
 # from classes.file_writers.FileWriter import FileWriter
@@ -10,7 +10,7 @@ from .FeatureMerger import FeatureMerger
 class Manager():
 
     def __init__(self):
-        self._gnt_wrapper: GNTWrapper = None
+        self._gnt_wrapper: GntApiWrapper = None
         self._settings: Settings = None
         self._fileA_generator: FileA_Generator = None
         self._fileB_generator: FileB_Generator = None
@@ -44,9 +44,9 @@ class Manager():
 
     # expensive resource
     @property
-    def gnt_wrapper(self) -> GNTWrapper:
+    def gnt_wrapper(self) -> GntApiWrapper:
         if self._gnt_wrapper is None:
-            self._gnt_wrapper = GNTWrapper()
+            self._gnt_wrapper = GntApiWrapper()
         return self._gnt_wrapper
 
     # keeping this instance here allows changing settings on the fly

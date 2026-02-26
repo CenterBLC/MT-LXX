@@ -81,7 +81,7 @@ class VerseHandler():
         # if self._nonPhrased_words is None:
             self._nonPhrased_wordHandlers = tuple(
                     wh for wh in self.wordHandlers 
-                    if wh.is_without_phrase
+                    if wh.phrasePosition.is_without_phrase
                 ) or None # returns None if the tuple is empty
             self._nonPhrased_wordHandlers_calculated = True
         return self._nonPhrased_wordHandlers

@@ -81,7 +81,7 @@ class GntVerseHandler():
         # if self._nonPhrased_words is None:
             self._nonGntPhrased_wordHandlers = tuple(
                     wh for wh in self.wordHandlers 
-                    if wh.gntSubphrasePosition.is_without_phrase
+                    if wh.gntPhrasePosition.is_without_phrase
                 ) or None # returns None if the tuple is empty
             self._nonGntPhrased_wordHandlers_calculated = True
         return self._nonGntPhrased_wordHandlers

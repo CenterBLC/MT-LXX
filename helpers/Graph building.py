@@ -14,7 +14,9 @@ data = [ # nr. 4 and 6 and 8 are out of the game (in blue or commented out)
     {'name': 'nlcgpS',        'Fscore': 94.55, 'Precision': 92.95, 'Recall': 96.21, 'description': "nlcgpS: norm + lemma + case + gender + person Signed (נ:Χριστοῦל:Χριστόςק:genג:mas)"},
     {'name': 'NLCM',          'Fscore': 94.63, 'Precision': 93.32, 'Recall': 95.97, 'description': "NLCM:           ... Followed by mood, sp, tense, morph (ἐeπpοoίiηeσsεeνn_πpοoιiέeωo_p_3_indicative_verbaoristV-AAI-3S)"},
     {'name': 'nlcgpnmst',     'Fscore': 95.17, 'Precision': 94.02, 'Recall': 96.35, 'description': "nlcgpnmst:      norm_lemma_case_gender_person_number_mood_sp_tense (🧭:ἐγέννησεν✂:γεννάωℕ:①⚙:●✎:→⏱:◆)"},
-    {'name': 'OOP-A/B-upd',     'Fscore': 95.56, 'Precision': 94.70, 'Recall': 96.43, 'description': "OOP-A/B-upd:      First OOP version with higher quality (debugged) A- and B-files)"},
+    {'name': 'OOP-ep20',     'Fscore': 95.56, 'Precision': 94.70, 'Recall': 96.43, 'description': "OOP-ep20:      First OOP version with higher quality (debugged) A- and B-files: 20 epochs"},
+    # {'name': 'OOP-ep20-weakerParams',     'Fscore': 93.25, 'Precision': 90.10, 'Recall': 95.72, 'description': "OOP-ep20-weakerParams:      Same, but with weaker AI training params"},
+    {'name': 'OOP-ep10',     'Fscore': 95.21, 'Precision': 94.69, 'Recall': 95.72, 'description': "OOP-ep10:      First OOP version with higher quality (debugged) A- and B-files: 10 epochs"},
     {'name': 'IDEAL',         'Fscore': 100.00, 'Precision': 100.00, 'Recall': 100.00, 'description': ""}
 ]
 

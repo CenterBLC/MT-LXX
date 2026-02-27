@@ -8,6 +8,7 @@ from classes.enums.DataLevel import DataLevel
 from classes.enums.FileBDisplayMode import FileBDisplayMode
 from classes.file_writers.FileB_Writer import FileB_Writer
 from classes.file_writers.FileWriterAbstract import FileWriterAbstract
+from classes.file_generators.fileB.WordHandler import WordHandler
 
 from .fileB.GntBookHandler import GntBookHandler
 
@@ -36,6 +37,8 @@ class FileB_Generator(FileGeneratorAbstract):
                 file_content: list[str] = book_handler.get_transformed_content()
                 all_files_content.extend(file_content)
         
+        all_files_content.insert(0, f"WordHandler.MaxGntPhraseSubsumingNestLevelCount = {WordHandler.MaxGntPhraseSubsumingNestLevelCount}")
+
         self._file_writer.WriteContents(all_files_content)
         print("internal report: file B generated.")
 

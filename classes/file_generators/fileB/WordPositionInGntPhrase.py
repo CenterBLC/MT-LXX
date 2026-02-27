@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .GntVerseHandler import GntVerseHandler
     from .WordHandler import WordHandler
 
-class WordPositionInGntSubphrase():
+class WordPositionInGntPhrase():
 
     def __init__(self
                  , manager: "Manager"
@@ -29,8 +29,27 @@ class WordPositionInGntSubphrase():
         self._is_mostRight_element_in_gntPhrase: bool = None
         self._is_mostRight_in_a_nonPhrased_word_sequence: bool = None
         self._is_lastWord_before_phraseRupture: bool = None
-        self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears: bool = None
+        self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears: bool = None
+        self._phraseSubsumingNestLevelCount: int | None = None
+        # self._nestedPhraseLevelCountAssigned: bool = False
 
+    @property
+    def phraseSubsumingNestLevelCount(self) -> int:
+        """
+        Level None:     the Count has not been calcualted yet
+        Level 0:        the word has no phrases
+        Level 1:        the word has only 1 phrase
+        Level 2:        the word has 2 phrases where the second phrase is nested under the first phrase
+        ...
+        Level Z:        the word has Z subnested phrases
+        """
+        if self._phraseSubsumingNestLevelCount is None:
+            # stoppedAt: 
+            # read all the phraseHandlers from the verseHandler (ref. self.containing_phraseHandlers) 
+            # and assign levels according to the ascending order of the phraseHandler's id's 
+            self._phraseSubsumingNestLevelCount = len(self.containing_phraseHandlers) if self.containing_phraseHandlers is not None else 0
+        return self._phraseSubsumingNestLevelCount
+    
     @property
     def subsequent_wordHandler(self) -> "WordHandler":
         if not self._is_subsequent_wordHandler_calculated:
@@ -39,22 +58,22 @@ class WordPositionInGntSubphrase():
         return self._subsequent_wordHandler
 
     @property
-    def is_inside_phrase_but_lastWord_before_additionalPhraseAppears(self) -> bool:
-        if self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears is None:
+    def is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears(self) -> bool:
+        if self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears is None:
             # first, ruling out scenarios that are not relevant for this property
             if (self.is_without_phrase): 
-                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
+                self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = False
             elif (self.subsequent_wordHandler is None):
-                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
+                self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = False
             elif (self.is_mostRight_element_in_gntPhrase):
-                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = False
+                self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = False
             # finally, calculating the property
             else:
-                self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears = (
-                    len(self.subsequent_wordHandler.gntSubphrasePosition.containing_phraseHandlers) >
+                self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = (
+                    len(self.subsequent_wordHandler.gntPhrasePosition.containing_phraseHandlers) >
                     len(self.containing_phraseHandlers)
                 )
-        return self._is_inside_phrase_but_lastWord_before_additionalPhraseAppears
+        return self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears
 
     @property
     def is_lastWord_before_phraseRupture(self) -> bool:
@@ -109,6 +128,5 @@ class WordPositionInGntSubphrase():
         """
         if self._containing_phraseHandlers is None:
             self._containing_phraseHandlers = self._containing_verseHandler.getContaining_gntPhraseHandlers(self._word_id)
-            # raise Exception('_containing_phraseHandlers are expected to be supplied through the constructor')
         return self._containing_phraseHandlers
     

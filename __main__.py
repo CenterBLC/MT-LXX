@@ -50,7 +50,7 @@ def main(
         if cmd in {"quit", "exit"}:
             break
         if cmd == "help":
-            print("Commands: generate A | GNT health check | query <q> | quit")
+            print("Commands: gen A[B] | datalevel NT_BOOK[NEW_TESTAMENT] | quit")
             continue
         if cmd.startswith("query "):
             q = cmd[len("query "):]

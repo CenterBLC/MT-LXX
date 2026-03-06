@@ -5,7 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         
-
+        {
+            "name": "Python Debugger: Main",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "H:/My Drive/eduAndrews/_WORK/TF_Projects_VS/TF.Convert.XML_BackEnd/CenterBLC/MT-LXX/__main__.py",
+            "console": "integratedTerminal"
+        },
         {
             "name": "Python Debugger: Current File",
             "type": "debugpy",

@@ -1,16 +1,15 @@
-WordHandler.MaxGntPhraseNestLevelCount = 2
-III_John	1	1	X1 Y1 X0 X0 Y0 Y1 Y1 Y1 X1 Y1
-III_John	1	2	Y0 X1 Y1 Y1 Y1 X0 X0 X0 Y0 Y1 X1 X1 Y1
-III_John	1	3	Y1 Y0 Y1 Y1 Y1 Y0 Y1 X1 X1 Y1 Y0 Y1 X1 Y1 Y1
-III_John	1	4	Y1 Y1 Y1 Y1 Y1 Y0 Y1 X1 X1 Y1 X1 X1 Y1 Y1
-III_John	1	5	Y0 Y1 Y1 Y1 Y0 Y1 X1 X1 Y1 Y0 Y1 Y0
-III_John	1	6	Y1 Y1 X1 X1 Y1 X1 Y1 Y1 Y1 Y1 Y1 Y1 X1 Y1
-III_John	1	7	Y1 Y0 X1 Y1 Y1 Y1 Y1 X1 X1 Y1
-III_John	1	8	Y1 Y0 Y1 Y1 X1 Y1 Y0 Y1 Y1 X1 Y1
-III_John	1	9	Y1 Y1 X1 Y1 Y0 Y1 Y2 Y2 Y1 Y1 Y1 Y1
-III_John	1	10	X1 Y1 Y0 Y1 Y1 X0 X0 Y0 Y1 Y1 X1 Y1 Y1 Y1 Y0 Y1 Y1 X1 Y1 Y0 Y1 Y1 X1 Y1 X0 Y0 Y1 Y1 Y0 X1 X1 Y1 Y1
-III_John	1	11	X0 Y0 Y1 X1 Y1 Y0 X1 Y1 Y0 Y1 X1 X1 Y1 Y1 Y0 Y1 Y1 Y1 X1 Y1
-III_John	1	12	Y1 Y1 X1 X1 X1 X1 X1 X1 Y1 X1 Y1 Y0 Y1 Y0 Y1 Y0 X1 X1 Y1 Y1 Y1
-III_John	1	13	Y1 Y1 Y1 Y1 Y0 Y1 Y1 X1 X1 X1 Y1 Y1 Y1
-III_John	1	14	Y1 Y0 Y1 Y1 Y1 Y0 X1 X1 Y1 Y1
-III_John	1	15	Y1 Y1 Y1 Y1 X1 Y1 Y1 X1 Y1 X1 Y1
+III_John	1	1	X·A Y·Ạ X· X· Y· Y·Ạ Y·Ạ Y·Ạ X·A Y·Ạ
+III_John	1	2	Y· X·A Y·Ạ Y·Ạ Y·Ạ X· X· X· Y· Y·Ạ X·A X·A Y·Ạ
+III_John	1	3	Y·Ạ Y· Y·Ạ Y·Ạ Y·Ạ Y· Y·Ạ X·A X·A Y·Ạ Y· Y·Ạ X·A Y·Ạ Y·Ạ
+III_John	1	4	Y·A Y·ȦḄ Y·ȦḄ Y·ȦḄ Y·Ạ Y· Y·Ạ X·A X·A Y·Ạ X·A X·A Y·Ạ Y·Ạ
+III_John	1	5	Y· Y·Ạ Y·Ạ Y·Ạ Y· Y·Ạ X·A X·A Y·Ạ Y· Y·Ạ Y·
+III_John	1	6	Y·Ạ Y·Ạ X·A X·A Y·Ạ X·A Y·Ạ Y·Ạ Y·Ạ Y·Ạ Y·Ạ Y·Ạ X·A Y·Ạ
+III_John	1	7	Y·A Y·Ȧ X·A Y·Ạ Y·Ạ Y·Ạ Y·Ạ X·A X·A Y·Ạ
+III_John	1	8	Y·Ạ Y· Y·Ạ Y·Ạ X·A Y·Ạ Y· Y·Ạ Y·Ạ X·A Y·Ạ
+III_John	1	9	Y·Ạ Y·Ạ X·A Y·Ạ Y· Y·A Y·AḄ Y·AḄ Y·Ạ Y·Ạ Y·Ạ Y·Ạ
+III_John	1	10	X·A Y·Ạ Y· Y·Ạ Y·Ạ X· X· Y· Y·Ạ Y·Ạ X·A Y·Ạ Y·Ạ Y·Ạ Y· Y·Ạ Y·Ạ X·A Y·Ạ Y· Y·Ạ Y·Ạ X·A Y·Ạ X· Y· Y·Ạ Y·Ạ Y· X·A X·A Y·Ạ Y·Ạ
+III_John	1	11	X· Y· Y·Ạ X·A Y·Ạ Y· X·A Y·Ạ Y· Y·Ạ X·A X·A Y·Ạ Y·Ạ Y· Y·Ạ Y·Ạ Y·Ạ X·A Y·Ạ
+III_John	1	12	Y·Ạ Y·Ạ X·A X·A X·A X·A X·A X·A Y·Ạ X·A Y·Ạ Y· Y·Ạ Y· Y·Ạ Y· X·A X·A Y·Ạ Y·Ạ Y·Ạ
+III_John	1	13	Y·Ạ Y·Ạ Y·Ạ Y·Ạ Y· Y·Ạ Y·Ạ X·A X·A X·A Y·Ạ Y·Ạ Y·Ạ
+III_John	1	14	Y·Ạ Y· Y·Ạ Y·Ạ Y·Ạ Y· X·A X·A Y·Ạ Y·Ạ
+III_John	1	15	Y·Ạ Y·Ạ Y·Ạ Y·Ạ X·A Y·Ạ Y·Ạ X·A Y·Ạ X·A Y·Ạ

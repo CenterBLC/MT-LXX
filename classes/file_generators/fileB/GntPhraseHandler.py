@@ -14,6 +14,10 @@ class GntPhraseHandler():
         self._words: tuple = None
     
     @property
+    def phrase_id(self) -> str:
+        return self._phrase_id
+    
+    @property
     def words(self) -> tuple:
         if self._words is None:
             self._words = self._gnt_wrapper.L.d(self._phrase_id, 'word')

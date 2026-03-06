@@ -2,7 +2,12 @@ from typing import TYPE_CHECKING
 
 from classes.GntApiWrapper import GntApiWrapper
 from .GntPhraseHandler import GntPhraseHandler
-from .WordPositionInGntPhraseLevelDescriptors import WordPositionInGntPhraseLevelDescriptors
+from .dataclasses.WordPositionInPhraseLevelDescriptors import WordPositionInPhraseLevelDescriptors
+from .dataclasses.WordPositionInPhraseLevelViews import WordPositionInPhraseLevelViews
+from .dataclasses.LevelDescriptor import LevelDescriptor
+from .dataclasses.LevelView import LevelView
+from .dataclasses.CompressedView import CompressedView
+from .dataclasses.PhraseSyntacticStructureDefinitions import PhraseSyntacticStructureDefinitions
 
 if TYPE_CHECKING:
     from classes.Manager import Manager
@@ -33,20 +38,63 @@ class WordPositionInGntPhrase():
         self._is_lastWord_before_phraseRupture: bool = None
         self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears: bool = None
         self._phraseAnytypeNestLevelCount: int | None = None
+        self._word_position_inPhrase_level_descriptors: WordPositionInPhraseLevelDescriptors = None
+        self._word_position_inPhrase_level_compressedViews: WordPositionInPhraseLevelViews = None
         # self._nestedPhraseLevelCountAssigned: bool = False
 
-
-    # stoppedAt: 
-            # read all the phraseHandlers from the verseHandler (ref. self.containing_phraseHandlers) 
-            # and assign levels according to the ascending order of the phraseHandler's id's 
-            # ===>>> create a new property which handles indexes for the levels 
-    # @property
-    # def levelDescriptors(self) -> WordPositionInGntPhraseLevelDescriptors:
-    #     if self._word_position_in_gntPhrase_level_descriptor is None:
-    #         self._word_position_in_gntPhrase_level_descriptor = WordPositionInGntPhraseLevelDescriptors()
-    #         .............
-    #     return self._word_position_in_gntPhrase_level_descriptor
+    @property
+    def levelDescriptors(self) -> WordPositionInPhraseLevelDescriptors:
+        if self._word_position_inPhrase_level_descriptors is None:
+            lds = WordPositionInPhraseLevelDescriptors()
+            if self.containing_anytypePhraseHandlers is not None:
+                for phrase_handler in sorted(self.containing_anytypePhraseHandlers, key=lambda ph: ph.phrase_id):
+                    lds.add(LevelDescriptor(syntacticalStructureId=phrase_handler.phrase_id
+                                            , isWordPhysicalPartOfSyntacticStructure=self._word_id in phrase_handler.words))
+            self._word_position_inPhrase_level_descriptors = lds
+        return self._word_position_inPhrase_level_descriptors
     
+    @property
+    def levelCompressedViews(self) -> WordPositionInPhraseLevelViews:
+        if self._word_position_inPhrase_level_compressedViews is None:
+            lcvs = WordPositionInPhraseLevelViews()
+                                                        # self._manager
+                                                        # #    , self._word_id
+                                                        #    , self.subsequent_wordHandler
+                                                        #    , self.levelDescriptors)
+
+            for level_index, level_descriptor in enumerate(self.levelDescriptors):
+                
+                if level_index not in PhraseSyntacticStructureDefinitions.LEVELS:
+                    raise IndexError(f"Level index {level_index} not found in PhraseSyntacticStructureDefinitions.LEVELS")
+
+                subsequentWord_level_descriptor = (
+                    self.subsequent_wordHandler.gntPhrasePosition.levelDescriptors[level_index]
+                    if (self.subsequent_wordHandler 
+                        and self.subsequent_wordHandler.gntPhrasePosition.levelDescriptors
+                        and level_index < len(self.subsequent_wordHandler.gntPhrasePosition.levelDescriptors))
+                    else None
+                )
+                
+                is_same_structure_to_subsequent_Word = (
+                    subsequentWord_level_descriptor and 
+                    subsequentWord_level_descriptor.syntacticalStructureId == level_descriptor.syntacticalStructureId
+                )
+                
+                compressedView: CompressedView = CompressedView(
+                    PhraseSyntacticStructureDefinitions.LEVELS[level_index].end_of_structure
+                    if not is_same_structure_to_subsequent_Word
+                    else PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_breaking_structure
+                    if not level_descriptor.isWordPhysicalPartOfSyntacticStructure
+                    else PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_subsuming_structure
+                )
+
+                levelView = LevelView(level_descriptor, compressedView)
+                lcvs.add(levelView)
+                if (level_index != len (lcvs)-1):
+                    raise IndexError(f"Level index {level_index} not found in WordPositionInPhraseLevelViews")
+                
+            self._word_position_inPhrase_level_compressedViews = lcvs
+        return self._word_position_inPhrase_level_compressedViews
 
     @property
     def phraseAnytypeNestLevelCount(self) -> int:

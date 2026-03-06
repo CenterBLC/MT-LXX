@@ -45,6 +45,13 @@ class WordHandler():
         if self._wordPositionInLxxSubphrase is None:
             self._wordPositionInLxxSubphrase = WordPositionInLxxSubphrase(self._manager, self._word_id, self._containing_verseHandler, self.gntPhrasePosition)
         return self._wordPositionInLxxSubphrase
+    
+    @property
+    def lxxPhrasePosition(self) -> WordPositionInLxxPhrase:
+        
+        if self._wordPositionInLxxPhrase is None:
+            self._wordPositionInLxxPhrase = WordPositionInLxxPhrase(self._manager, self._word_id, self._containing_verseHandler, self.gntPhrasePosition)
+        return self._wordPositionInLxxPhrase
 
     @property
     def compressedView(self) -> str:
@@ -52,10 +59,10 @@ class WordHandler():
         if self._compressedView is None:
 
             # this version shows subsuming nest level count for every word, for temporary technical analysis purposes -- useful line, do not delete
-            self._compressedView = f"{self.lxxSubphrasePosition.compressedView}c{self.gntPhrasePosition.phraseAnytypeNestLevelCount}"
+            # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}c{self.gntPhrasePosition.phraseAnytypeNestLevelCount}"
             WordHandler.MaxGntPhraseAnytypeNestLevelCount = max(WordHandler.MaxGntPhraseAnytypeNestLevelCount, self.gntPhrasePosition.phraseAnytypeNestLevelCount)
 
-            # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}"
+            self._compressedView = f"{self.lxxSubphrasePosition.compressedView}·{self.lxxPhrasePosition.compressedView}"
         return self._compressedView
     
 

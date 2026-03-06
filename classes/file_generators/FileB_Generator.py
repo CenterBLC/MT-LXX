@@ -38,7 +38,7 @@ class FileB_Generator(FileGeneratorAbstract):
                 all_files_content.extend(file_content)
         
         # do not delete. useful temporary functionality
-        all_files_content.insert(0, f"WordHandler.MaxGntPhraseAnytypeNestLevelCount = {WordHandler.MaxGntPhraseAnytypeNestLevelCount}")
+        # all_files_content.insert(0, f"WordHandler.MaxGntPhraseAnytypeNestLevelCount = {WordHandler.MaxGntPhraseAnytypeNestLevelCount}")
 
         self._file_writer.WriteContents(all_files_content)
         print("internal report: file B generated.")

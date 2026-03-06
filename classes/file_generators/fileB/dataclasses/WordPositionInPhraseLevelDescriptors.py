@@ -1,6 +1,8 @@
+from typing import Iterator
+
 from .LevelDescriptor import LevelDescriptor
 
-class WordPositionInGntPhraseLevelDescriptors():
+class WordPositionInPhraseLevelDescriptors():
     """
     The indexer of this class (or its internal list) is the 
     level number (int): 0...Z. 
@@ -24,6 +26,9 @@ class WordPositionInGntPhraseLevelDescriptors():
         if not isinstance(value, LevelDescriptor):
             raise TypeError("Value must be a LevelDescriptor")
         self._levels[index] = value
+    
+    def __iter__(self) -> Iterator[LevelDescriptor]:
+        return iter(self._levels)
 
     def __len__(self):
         return len(self._levels)

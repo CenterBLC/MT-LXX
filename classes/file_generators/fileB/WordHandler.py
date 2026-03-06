@@ -13,7 +13,8 @@ if TYPE_CHECKING:
 class WordHandler():
 
     # class static variables
-    MaxGntPhraseSubsumingNestLevelCount: int = 0
+    # do not delete: useful temporary functionality 
+    MaxGntPhraseAnytypeNestLevelCount: int = 0
 
     def __init__(self
                  , manager: "Manager"
@@ -49,8 +50,12 @@ class WordHandler():
     def compressedView(self) -> str:
 
         if self._compressedView is None:
-            self._compressedView = f"{self.lxxSubphrasePosition.compressedView}{self.gntPhrasePosition.phraseSubsumingNestLevelCount}"
-            WordHandler.MaxGntPhraseSubsumingNestLevelCount = max(WordHandler.MaxGntPhraseSubsumingNestLevelCount, self.gntPhrasePosition.phraseSubsumingNestLevelCount)
+
+            # this version shows subsuming nest level count for every word, for temporary technical analysis purposes -- useful line, do not delete
+            self._compressedView = f"{self.lxxSubphrasePosition.compressedView}c{self.gntPhrasePosition.phraseAnytypeNestLevelCount}"
+            WordHandler.MaxGntPhraseAnytypeNestLevelCount = max(WordHandler.MaxGntPhraseAnytypeNestLevelCount, self.gntPhrasePosition.phraseAnytypeNestLevelCount)
+
+            # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}"
         return self._compressedView
     
 

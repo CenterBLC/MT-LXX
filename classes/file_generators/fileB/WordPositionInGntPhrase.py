@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from classes.GntApiWrapper import GntApiWrapper
 from .GntPhraseHandler import GntPhraseHandler
+from .WordPositionInGntPhraseLevelDescriptors import WordPositionInGntPhraseLevelDescriptors
 
 if TYPE_CHECKING:
     from classes.Manager import Manager
@@ -24,31 +25,43 @@ class WordPositionInGntPhrase():
         self._compressedView: str = None
         self._is_subsequent_wordHandler_calculated: bool = False
         self._subsequent_wordHandler: WordHandler = None
-        self._containing_phraseHandlers: tuple[GntPhraseHandler] = None
-        self._is_without_phrase: bool = None
+        self._containing_subsuming_phraseHandlers: tuple[GntPhraseHandler] = None
+        self._containing_anytype_phraseHandlers: tuple[GntPhraseHandler] = None
+        self._is_without_subsuming_phrase: bool = None
         self._is_mostRight_element_in_gntPhrase: bool = None
         self._is_mostRight_in_a_nonPhrased_word_sequence: bool = None
         self._is_lastWord_before_phraseRupture: bool = None
         self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears: bool = None
-        self._phraseSubsumingNestLevelCount: int | None = None
+        self._phraseAnytypeNestLevelCount: int | None = None
         # self._nestedPhraseLevelCountAssigned: bool = False
 
-    @property
-    def phraseSubsumingNestLevelCount(self) -> int:
-        """
-        Level None:     the Count has not been calcualted yet
-        Level 0:        the word has no phrases
-        Level 1:        the word has only 1 phrase
-        Level 2:        the word has 2 phrases where the second phrase is nested under the first phrase
-        ...
-        Level Z:        the word has Z subnested phrases
-        """
-        if self._phraseSubsumingNestLevelCount is None:
-            # stoppedAt: 
+
+    # stoppedAt: 
             # read all the phraseHandlers from the verseHandler (ref. self.containing_phraseHandlers) 
             # and assign levels according to the ascending order of the phraseHandler's id's 
-            self._phraseSubsumingNestLevelCount = len(self.containing_phraseHandlers) if self.containing_phraseHandlers is not None else 0
-        return self._phraseSubsumingNestLevelCount
+            # ===>>> create a new property which handles indexes for the levels 
+    # @property
+    # def levelDescriptors(self) -> WordPositionInGntPhraseLevelDescriptors:
+    #     if self._word_position_in_gntPhrase_level_descriptor is None:
+    #         self._word_position_in_gntPhrase_level_descriptor = WordPositionInGntPhraseLevelDescriptors()
+    #         .............
+    #     return self._word_position_in_gntPhrase_level_descriptor
+    
+
+    @property
+    def phraseAnytypeNestLevelCount(self) -> int:
+        """
+        Count None:     the Count has not been calcualted yet
+        Count 0:        the word has no phrases
+        Count 1:        the word has only 1 phrase
+        Count 2:        the word has 2 phrases where the second phrase is nested under the first phrase
+        ...
+        Count Z:        the word has Z subnested phrases
+        """
+        if self._phraseAnytypeNestLevelCount is None:
+            self._phraseAnytypeNestLevelCount = len(self.containing_anytypePhraseHandlers) if self.containing_anytypePhraseHandlers is not None else 0
+        return self._phraseAnytypeNestLevelCount
+    
     
     @property
     def subsequent_wordHandler(self) -> "WordHandler":
@@ -61,7 +74,7 @@ class WordPositionInGntPhrase():
     def is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears(self) -> bool:
         if self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears is None:
             # first, ruling out scenarios that are not relevant for this property
-            if (self.is_without_phrase): 
+            if (self.is_without_subsuming_phrase): 
                 self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = False
             elif (self.subsequent_wordHandler is None):
                 self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = False
@@ -70,21 +83,21 @@ class WordPositionInGntPhrase():
             # finally, calculating the property
             else:
                 self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears = (
-                    len(self.subsequent_wordHandler.gntPhrasePosition.containing_phraseHandlers) >
-                    len(self.containing_phraseHandlers)
+                    len(self.subsequent_wordHandler.gntPhrasePosition.containing_subsumingPhraseHandlers) >
+                    len(self.containing_subsumingPhraseHandlers)
                 )
         return self._is_inside_phrase_but_is_lastWord_before_additionalPhraseAppears
 
     @property
     def is_lastWord_before_phraseRupture(self) -> bool:
         if self._is_lastWord_before_phraseRupture is None:
-            if (self.is_without_phrase): 
+            if (self.is_without_subsuming_phrase): 
                 self._is_lastWord_before_phraseRupture = False
             else:
                 self._is_lastWord_before_phraseRupture = any(
                         self._word_id != phrase_handler.words[-1]
                         and (self._word_id + 1) not in phrase_handler.words
-                        for phrase_handler in self.containing_phraseHandlers
+                        for phrase_handler in self.containing_subsumingPhraseHandlers
                     )
         return self._is_lastWord_before_phraseRupture
     
@@ -92,23 +105,23 @@ class WordPositionInGntPhrase():
     def is_mostRight_element_in_gntPhrase(self) -> bool:
         if self._is_mostRight_element_in_gntPhrase is None:
             self._is_mostRight_element_in_gntPhrase = (
-                self.containing_phraseHandlers is not None and any(
+                self.containing_subsumingPhraseHandlers is not None and any(
                     phrase_handler.words[-1] == int(self._word_id)
-                    for phrase_handler in self.containing_phraseHandlers
+                    for phrase_handler in self.containing_subsumingPhraseHandlers
                 )
             )
         return self._is_mostRight_element_in_gntPhrase
     
     @property
-    def is_without_phrase(self) -> bool:
-        if self._is_without_phrase is None:
-            self._is_without_phrase = self.containing_phraseHandlers is None
-        return self._is_without_phrase
+    def is_without_subsuming_phrase(self) -> bool:
+        if self._is_without_subsuming_phrase is None:
+            self._is_without_subsuming_phrase = self.containing_subsumingPhraseHandlers is None
+        return self._is_without_subsuming_phrase
     
     @property
     def is_mostRight_in_a_nonPhrased_word_sequence(self) -> bool:
         if self._is_mostRight_in_a_nonPhrased_word_sequence is None:
-            if (not self.is_without_phrase): # there is at least one phrase for this word
+            if (not self.is_without_subsuming_phrase): # there is at least one phrase for this word
                 self._is_mostRight_in_a_nonPhrased_word_sequence = False
             else:
                 self._is_mostRight_in_a_nonPhrased_word_sequence = not ( #negation
@@ -120,13 +133,24 @@ class WordPositionInGntPhrase():
         return self._is_mostRight_in_a_nonPhrased_word_sequence
     
     @property
-    def containing_phraseHandlers(self) -> tuple[GntPhraseHandler]:
+    def containing_anytypePhraseHandlers(self) -> tuple[GntPhraseHandler]:
+        """
+        "Anytype" includes both subsuming and breaking phrases.
+        This method returns all types of phrases
+        """
+        if self._containing_anytype_phraseHandlers is None:
+            self._containing_anytype_phraseHandlers = self._containing_verseHandler.getContaining_gntAnytypePhraseHandlers(self._word_id)
+        return self._containing_anytype_phraseHandlers
+    
+
+    @property
+    def containing_subsumingPhraseHandlers(self) -> tuple[GntPhraseHandler]:
         """
         Phrase handlers could be calculated through 
         phrases = L.u(w, otype='phrase')
         But creating phrase handlers by the parent Verse object ensures there is only one Phrase Handler instance per phrase across all objects
         """
-        if self._containing_phraseHandlers is None:
-            self._containing_phraseHandlers = self._containing_verseHandler.getContaining_gntPhraseHandlers(self._word_id)
-        return self._containing_phraseHandlers
+        if self._containing_subsuming_phraseHandlers is None:
+            self._containing_subsuming_phraseHandlers = self._containing_verseHandler.getContaining_gntSubsumingPhraseHandlers(self._word_id)
+        return self._containing_subsuming_phraseHandlers
     

@@ -62,7 +62,14 @@ class GntVerseHandler():
             self._wordHandlers = tuple(res)
         return self._wordHandlers
 
-    def getContaining_gntPhraseHandlers(self, word_id: int) -> tuple[WordHandler]:
+    def getContaining_gntAnytypePhraseHandlers(self, word_id: int) -> tuple[WordHandler]:
+        containing_gntPhraseHandlers = tuple(
+                phrase_handler for phrase_handler in self.gntPhraseHandlers 
+                if min(phrase_handler.words) <= word_id <= max(phrase_handler.words)
+            ) or None # returns None if the tuple is empty
+        return containing_gntPhraseHandlers
+    
+    def getContaining_gntSubsumingPhraseHandlers(self, word_id: int) -> tuple[WordHandler]:
         containing_gntPhraseHandlers = tuple(
                     phrase_handler for phrase_handler in self.gntPhraseHandlers 
                     if word_id in phrase_handler.words
@@ -81,7 +88,7 @@ class GntVerseHandler():
         # if self._nonPhrased_words is None:
             self._nonGntPhrased_wordHandlers = tuple(
                     wh for wh in self.wordHandlers 
-                    if wh.gntPhrasePosition.is_without_phrase
+                    if wh.gntPhrasePosition.is_without_subsuming_phrase
                 ) or None # returns None if the tuple is empty
             self._nonGntPhrased_wordHandlers_calculated = True
         return self._nonGntPhrased_wordHandlers

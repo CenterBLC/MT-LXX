@@ -37,7 +37,8 @@ class FileB_Generator(FileGeneratorAbstract):
                 file_content: list[str] = book_handler.get_transformed_content()
                 all_files_content.extend(file_content)
         
-        all_files_content.insert(0, f"WordHandler.MaxGntPhraseSubsumingNestLevelCount = {WordHandler.MaxGntPhraseSubsumingNestLevelCount}")
+        # do not delete. useful temporary functionality
+        all_files_content.insert(0, f"WordHandler.MaxGntPhraseAnytypeNestLevelCount = {WordHandler.MaxGntPhraseAnytypeNestLevelCount}")
 
         self._file_writer.WriteContents(all_files_content)
         print("internal report: file B generated.")

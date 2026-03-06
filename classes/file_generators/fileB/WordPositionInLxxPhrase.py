@@ -40,7 +40,7 @@ class WordPositionInLxxPhrase():
             self._compressedView = (
                 "B" 
                 if gntPhrPos.is_mostRight_element_in_gntPhrase # standard requirement
-                    or (gntPhrPos.is_without_phrase and gntPhrPos.is_mostRight_in_a_nonPhrased_word_sequence) # e.g., 3 John 1:1: Γαΐῳ τῷ ἀγαπητῷ would otherwise create 'YYY' instead of 'XXY'
+                    or (gntPhrPos.is_without_subsuming_phrase and gntPhrPos.is_mostRight_in_a_nonPhrased_word_sequence) # e.g., 3 John 1:1: Γαΐῳ τῷ ἀγαπητῷ would otherwise create 'YYY' instead of 'XXY'
                     # gntPhrPos.level
 
                     # or gntSubphrPos.is_lastWord_before_phraseRupture # e.g., 3 John 1:4: phrase:254291 (word: 127310) μειζοτέραν (Y) -- ... -- χαράν

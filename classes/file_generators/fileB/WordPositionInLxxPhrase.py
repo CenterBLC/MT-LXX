@@ -64,7 +64,8 @@ class WordPositionInLxxPhrase():
 
         if self._compressedView is None: # and gntPhrPos is not None:
             
-            self._compressedView = "".join(lcv.compressedView.text for lcv in self.levelCompressedViews)
+            compressed = "".join(lcv.compressedView.text for lcv in self.levelCompressedViews)
+            self._compressedView = compressed if compressed else "∅" # ␀
 
 
             # self._compressedView = (

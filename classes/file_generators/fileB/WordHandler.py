@@ -62,7 +62,8 @@ class WordHandler():
             # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}c{self.gntPhrasePosition.phraseAnytypeNestLevelCount}"
             WordHandler.MaxGntPhraseAnytypeNestLevelCount = max(WordHandler.MaxGntPhraseAnytypeNestLevelCount, self.gntPhrasePosition.phraseAnytypeNestLevelCount)
 
-            self._compressedView = f"{self.lxxSubphrasePosition.compressedView}·{self.lxxPhrasePosition.compressedView}"
+            # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}·{self.lxxPhrasePosition.compressedView}"
+            self._compressedView = f"{self.lxxPhrasePosition.compressedView}"
         return self._compressedView
     
 

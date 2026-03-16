@@ -61,7 +61,7 @@ loadCss(GNT)
 query = '''
 book book=III_John
  chapter chapter=1 
-   verse verse=1
+   verse verse=4
     word lemma
 '''
 

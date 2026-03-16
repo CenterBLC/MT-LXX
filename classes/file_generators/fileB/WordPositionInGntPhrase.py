@@ -31,7 +31,7 @@ class WordPositionInGntPhrase():
         self._is_subsequent_wordHandler_calculated: bool = False
         self._subsequent_wordHandler: WordHandler = None
         self._containing_subsuming_phraseHandlers: tuple[GntPhraseHandler] = None
-        self._containing_anytype_phraseHandlers: tuple[GntPhraseHandler] = None
+        self._containing_phraseHandlers: tuple[GntPhraseHandler] = None
         self._is_without_subsuming_phrase: bool = None
         self._is_mostRight_element_in_gntPhrase: bool = None
         self._is_mostRight_in_a_nonPhrased_word_sequence: bool = None
@@ -46,8 +46,8 @@ class WordPositionInGntPhrase():
     def levelDescriptors(self) -> WordPositionInPhraseLevelDescriptors:
         if self._word_position_inPhrase_level_descriptors is None:
             lds = WordPositionInPhraseLevelDescriptors()
-            if self.containing_anytypePhraseHandlers is not None:
-                for phrase_handler in sorted(self.containing_anytypePhraseHandlers, key=lambda ph: ph.phrase_id):
+            if self.containing_PhraseHandlers is not None:
+                for phrase_handler in sorted(self.containing_PhraseHandlers, key=lambda ph: ph.phrase_id):
                     lds.add(LevelDescriptor(syntacticalStructureId=phrase_handler.phrase_id
                                             , isWordPhysicalPartOfSyntacticStructure=self._word_id in phrase_handler.words))
             self._word_position_inPhrase_level_descriptors = lds
@@ -107,7 +107,7 @@ class WordPositionInGntPhrase():
         Count Z:        the word has Z subnested phrases
         """
         if self._phraseAnytypeNestLevelCount is None:
-            self._phraseAnytypeNestLevelCount = len(self.containing_anytypePhraseHandlers) if self.containing_anytypePhraseHandlers is not None else 0
+            self._phraseAnytypeNestLevelCount = len(self.containing_PhraseHandlers) if self.containing_PhraseHandlers is not None else 0
         return self._phraseAnytypeNestLevelCount
     
     
@@ -181,14 +181,14 @@ class WordPositionInGntPhrase():
         return self._is_mostRight_in_a_nonPhrased_word_sequence
     
     @property
-    def containing_anytypePhraseHandlers(self) -> tuple[GntPhraseHandler]:
+    def containing_PhraseHandlers(self) -> tuple[GntPhraseHandler]:
         """
         "Anytype" includes both subsuming and breaking phrases.
         This method returns all types of phrases
         """
-        if self._containing_anytype_phraseHandlers is None:
-            self._containing_anytype_phraseHandlers = self._containing_verseHandler.getContaining_gntAnytypePhraseHandlers(self._word_id)
-        return self._containing_anytype_phraseHandlers
+        if self._containing_phraseHandlers is None:
+            self._containing_phraseHandlers = self._containing_verseHandler.getContaining_gntPhraseHandlers(self._word_id)
+        return self._containing_phraseHandlers
     
 
     @property

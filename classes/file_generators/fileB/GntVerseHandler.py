@@ -62,7 +62,7 @@ class GntVerseHandler():
             self._wordHandlers = tuple(res)
         return self._wordHandlers
 
-    def getContaining_gntAnytypePhraseHandlers(self, word_id: int) -> tuple[WordHandler]:
+    def getContaining_gntPhraseHandlers(self, word_id: int) -> tuple[WordHandler]:
         containing_gntPhraseHandlers = tuple(
                 phrase_handler for phrase_handler in self.gntPhraseHandlers 
                 if min(phrase_handler.words) <= word_id <= max(phrase_handler.words)

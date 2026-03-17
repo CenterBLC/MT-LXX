@@ -8,12 +8,66 @@ class Settings():
     
     def __init__(self):
         self._data_level: DataLevel = DataLevel.NEW_TESTAMENT
-        # III_John
-        # Matthew
-        self._selected_book: str = 'III_John'
+        self._selected_book: str = 'III_John' # III_John # Matthew
         self._fileA_merge_mode: FileAMergeMode = FileAMergeMode.NLCGPNMST
         self._fileB_display_mode: FileBDisplayMode = FileBDisplayMode.COMPRESSED
         self._path_folder: str = "sp_data_gnt"
+
+
+        self._fileB_include_lxxSubphrases: bool = False
+
+        self._fileB_include_lxxPhrases: bool = True
+        self._fileB_include_lxxPhrases_level0: bool = True
+        self._fileB_include_lxxPhrases_level1: bool = False
+        self._fileB_include_lxxPhrases_level2: bool = False
+        self._fileB_include_lxxPhrases_level3: bool = False
+
+        self._fileB_include_structurePart_subsuming: bool = True
+        self._fileB_include_structurePart_breaking: bool = False
+        self._fileB_include_structurePart_end: bool = True
+
+        self._orphan_symbol = "∅" # "∅" # ␀
+
+    @property
+    def orphan_symbol(self) -> str:
+        return self._orphan_symbol
+
+    @property
+    def fileB_include_structurePart_subsuming(self) -> bool:
+        return self._fileB_include_structurePart_subsuming
+
+    @property
+    def fileB_include_structurePart_breaking(self) -> bool:
+        return self._fileB_include_structurePart_breaking
+
+    @property
+    def fileB_include_structurePart_end(self) -> bool:
+        return self._fileB_include_structurePart_end
+
+
+    @property
+    def fileB_include_lxxSubphrases(self) -> bool:
+        return self._fileB_include_lxxSubphrases
+
+    @property
+    def fileB_include_lxxPhrases(self) -> bool:
+        return self._fileB_include_lxxPhrases
+
+    @property
+    def fileB_include_lxxPhrases_level0(self) -> bool:
+        return self._fileB_include_lxxPhrases_level0
+
+    @property
+    def fileB_include_lxxPhrases_level1(self) -> bool:
+        return self._fileB_include_lxxPhrases_level1
+
+    @property
+    def fileB_include_lxxPhrases_level2(self) -> bool:
+        return self._fileB_include_lxxPhrases_level2
+
+    @property
+    def fileB_include_lxxPhrases_level3(self) -> bool:
+        return self._fileB_include_lxxPhrases_level3
 
     @property
     def fileB_display_mode(self) -> FileBDisplayMode:

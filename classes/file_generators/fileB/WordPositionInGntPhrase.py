@@ -5,9 +5,11 @@ from .GntPhraseHandler import GntPhraseHandler
 from .dataclasses.WordPositionInPhraseLevelDescriptors import WordPositionInPhraseLevelDescriptors
 from .dataclasses.WordPositionInPhraseLevelViews import WordPositionInPhraseLevelViews
 from .dataclasses.LevelDescriptor import LevelDescriptor
+from .dataclasses.LevelLetters import LevelLetters
 from .dataclasses.LevelView import LevelView
 from .dataclasses.CompressedView import CompressedView
 from .dataclasses.PhraseSyntacticStructureDefinitions import PhraseSyntacticStructureDefinitions
+from .enums.SyntacticStructure import SyntacticStructure
 
 if TYPE_CHECKING:
     from classes.Manager import Manager
@@ -67,6 +69,15 @@ class WordPositionInGntPhrase():
                 if level_index not in PhraseSyntacticStructureDefinitions.LEVELS:
                     raise IndexError(f"Level index {level_index} not found in PhraseSyntacticStructureDefinitions.LEVELS")
 
+                if (level_index == 0 and not self._manager.settings.fileB_include_lxxPhrases_level0):
+                    continue
+                if (level_index == 1 and not self._manager.settings.fileB_include_lxxPhrases_level1):
+                    continue
+                if (level_index == 2 and not self._manager.settings.fileB_include_lxxPhrases_level2):
+                    continue
+                if (level_index == 3 and not self._manager.settings.fileB_include_lxxPhrases_level3):
+                    continue
+
                 subsequentWord_level_descriptor = (
                     self.subsequent_wordHandler.gntPhrasePosition.levelDescriptors[level_index]
                     if (self.subsequent_wordHandler 
@@ -81,11 +92,13 @@ class WordPositionInGntPhrase():
                 )
                 
                 compressedView: CompressedView = CompressedView(
-                    PhraseSyntacticStructureDefinitions.LEVELS[level_index].end_of_structure
+                    self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.END_OF_STRUCTURE) 
                     if not is_same_structure_to_subsequent_Word
-                    else PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_breaking_structure
+
+                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.IN_BREAKING_STRUCTURE) 
                     if not level_descriptor.isWordPhysicalPartOfSyntacticStructure
-                    else PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_subsuming_structure
+
+                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.IN_SUBSUMING_STRUCTURE)
                 )
 
                 levelView = LevelView(level_descriptor, compressedView)
@@ -95,6 +108,27 @@ class WordPositionInGntPhrase():
                 
             self._word_position_inPhrase_level_compressedViews = lcvs
         return self._word_position_inPhrase_level_compressedViews
+
+    def getStructureSymbolAccordingToSettings(self, level_index: int, structure_part: SyntacticStructure) -> str:
+        if structure_part == SyntacticStructure.END_OF_STRUCTURE:
+            if self._manager.settings.fileB_include_structurePart_end:
+                return PhraseSyntacticStructureDefinitions.LEVELS[level_index].end_of_structure
+            else:
+                return self._manager.settings.orphan_symbol
+        
+        if structure_part == SyntacticStructure.IN_BREAKING_STRUCTURE:
+            if self._manager.settings.fileB_include_structurePart_breaking:
+                return PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_breaking_structure
+            else:
+                return self._manager.settings.orphan_symbol
+            
+        if structure_part == SyntacticStructure.IN_SUBSUMING_STRUCTURE:
+            if self._manager.settings.fileB_include_structurePart_subsuming:
+                return PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_subsuming_structure
+            else:
+                return self._manager.settings.orphan_symbol
+        
+        raise Exception(f"Unknown structure_part {structure_part}")
 
     @property
     def phraseAnytypeNestLevelCount(self) -> int:

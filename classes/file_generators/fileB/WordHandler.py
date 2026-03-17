@@ -62,8 +62,19 @@ class WordHandler():
             # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}c{self.gntPhrasePosition.phraseAnytypeNestLevelCount}"
             WordHandler.MaxGntPhraseAnytypeNestLevelCount = max(WordHandler.MaxGntPhraseAnytypeNestLevelCount, self.gntPhrasePosition.phraseAnytypeNestLevelCount)
 
-            # self._compressedView = f"{self.lxxSubphrasePosition.compressedView}·{self.lxxPhrasePosition.compressedView}"
-            self._compressedView = f"{self.lxxPhrasePosition.compressedView}"
+            cvs = list()
+
+            if (self._manager.settings.fileB_include_lxxSubphrases):
+                cvs.append(self.lxxSubphrasePosition.compressedView)
+
+            if (self._manager.settings.fileB_include_lxxPhrases):
+                cvs.append(self.lxxPhrasePosition.compressedView)
+
+            if len(cvs) > 1:
+                self._compressedView = "·".join(cvs)
+            elif len(cvs) == 1:
+                self._compressedView = cvs[0]
+
         return self._compressedView
     
 

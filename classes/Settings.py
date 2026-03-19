@@ -26,7 +26,10 @@ class Settings():
         self._fileB_include_structurePart_breaking: bool = False
         self._fileB_include_structurePart_end: bool = True
 
-        self._orphan_symbol = "∅" # "∅" # ␀  using: ∅ (U+2205) (3 bytes); 2-bytes alternatives: Ø (U+00D8); ø (U+00F8); 1-byte alternative: ~ (Tilde - U+007E); . (Period / Full Stop - U+002E); | (Vertical Line / Pipe - U+007C); 0 (Zero - U+0030)
+        # 3-byte alternative: ∅ (U+2205) (3 bytes); 
+        # 2-bytes alternatives: Ø (U+00D8); ø (U+00F8); 
+        # 1-byte alternative: ~ (Tilde - U+007E); . (Period / Full Stop - U+002E); | (Vertical Line / Pipe - U+007C); 0 (Zero - U+0030 [used now])
+        self._orphan_symbol = "0"  
 
     @property
     def orphan_symbol(self) -> str:

@@ -8,7 +8,7 @@ class PhraseSyntacticStructureDefinitions:
         0: LevelLetters(
             in_subsuming_structure="A", # A (U+0041)
             in_breaking_structure="Ȧ", # Ȧ (U+0226)
-            end_of_structure="Z", # Ạ (U+1EA0) Z (U+005A)
+            end_of_structure="Ạ", # Ạ (U+1EA0) Z (U+005A)
         ),
         1: LevelLetters(
             in_subsuming_structure="B", # B (U+0042)

@@ -22,7 +22,7 @@ class Settings():
         self._fileB_include_lxxPhrases_level2: bool = False
         self._fileB_include_lxxPhrases_level3: bool = False
 
-        self._fileB_include_structurePart_subsuming: bool = True
+        self._fileB_include_structurePart_subsuming: bool = False
         self._fileB_include_structurePart_breaking: bool = False
         self._fileB_include_structurePart_end: bool = True
 

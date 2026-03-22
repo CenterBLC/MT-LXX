@@ -48,10 +48,11 @@ class WordPositionInGntPhrase():
     def levelDescriptors(self) -> WordPositionInPhraseLevelDescriptors:
         if self._word_position_inPhrase_level_descriptors is None:
             lds = WordPositionInPhraseLevelDescriptors()
-            if self.containing_PhraseHandlers is not None:
+            if self.containing_PhraseHandlers is not None: # meaning both logically and physically containing...
                 for phrase_handler in sorted(self.containing_PhraseHandlers, key=lambda ph: ph.phrase_id):
                     lds.add(LevelDescriptor(syntacticalStructureId=phrase_handler.phrase_id
-                                            , isWordPhysicalPartOfSyntacticStructure=self._word_id in phrase_handler.words))
+                                            , isWordPhysicalPartOfSyntacticStructure=self._word_id in phrase_handler.words
+                                            , gntPhraseHandler=phrase_handler))
             self._word_position_inPhrase_level_descriptors = lds
         return self._word_position_inPhrase_level_descriptors
     
@@ -86,19 +87,25 @@ class WordPositionInGntPhrase():
                     else None
                 )
                 
-                is_same_structure_to_subsequent_Word = (
-                    subsequentWord_level_descriptor and 
-                    subsequentWord_level_descriptor.syntacticalStructureId == level_descriptor.syntacticalStructureId
-                )
+                # is_same_structure_to_subsequent_Word = (
+                #     subsequentWord_level_descriptor and 
+                #     subsequentWord_level_descriptor.syntacticalStructureId == level_descriptor.syntacticalStructureId
+                # )
                 
                 compressedView: CompressedView = CompressedView(
+                    
+                    # first, take the end of the structure, then other elements. The Beginning == The End in some cases.
                     self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.END_OF_STRUCTURE) 
-                    if not is_same_structure_to_subsequent_Word
+                    # if not is_same_structure_to_subsequent_Word
+                    if self._word_id == level_descriptor.gntPhraseHandler.theMostRightWord
 
-                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.IN_BREAKING_STRUCTURE) 
-                    if not level_descriptor.isWordPhysicalPartOfSyntacticStructure
+                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.START_OF_STRUCTURE) 
+                    if self._word_id == level_descriptor.gntPhraseHandler.theMostLeftWord
 
-                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.IN_SUBSUMING_STRUCTURE)
+                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.IN_SUBSUMING_STRUCTURE) 
+                    if level_descriptor.isWordPhysicalPartOfSyntacticStructure
+
+                    else self.getStructureSymbolAccordingToSettings(level_index, SyntacticStructure.IN_BREAKING_STRUCTURE)
                 )
 
                 levelView = LevelView(level_descriptor, compressedView)
@@ -110,9 +117,22 @@ class WordPositionInGntPhrase():
         return self._word_position_inPhrase_level_compressedViews
 
     def getStructureSymbolAccordingToSettings(self, level_index: int, structure_part: SyntacticStructure) -> str:
+        
+        if structure_part == SyntacticStructure.START_OF_STRUCTURE:
+            if self._manager.settings.fileB_include_structurePart_start:
+                return PhraseSyntacticStructureDefinitions.LEVELS[level_index].start_of_structure
+            else:
+                return self._manager.settings.orphan_symbol
+        
         if structure_part == SyntacticStructure.END_OF_STRUCTURE:
             if self._manager.settings.fileB_include_structurePart_end:
                 return PhraseSyntacticStructureDefinitions.LEVELS[level_index].end_of_structure
+            else:
+                return self._manager.settings.orphan_symbol
+        
+        if structure_part == SyntacticStructure.IN_SUBSUMING_STRUCTURE:
+            if self._manager.settings.fileB_include_structurePart_subsuming:
+                return PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_subsuming_structure
             else:
                 return self._manager.settings.orphan_symbol
         
@@ -122,12 +142,6 @@ class WordPositionInGntPhrase():
             else:
                 return self._manager.settings.orphan_symbol
             
-        if structure_part == SyntacticStructure.IN_SUBSUMING_STRUCTURE:
-            if self._manager.settings.fileB_include_structurePart_subsuming:
-                return PhraseSyntacticStructureDefinitions.LEVELS[level_index].in_subsuming_structure
-            else:
-                return self._manager.settings.orphan_symbol
-        
         raise Exception(f"Unknown structure_part {structure_part}")
 
     @property

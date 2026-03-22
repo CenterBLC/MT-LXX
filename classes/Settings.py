@@ -22,8 +22,9 @@ class Settings():
         self._fileB_include_lxxPhrases_level2: bool = False
         self._fileB_include_lxxPhrases_level3: bool = False
 
-        self._fileB_include_structurePart_subsuming: bool = False
-        self._fileB_include_structurePart_breaking: bool = False
+        self._fileB_include_structurePart_start: bool = True
+        self._fileB_include_structurePart_subsuming: bool = True
+        self._fileB_include_structurePart_breaking: bool = True
         self._fileB_include_structurePart_end: bool = True
 
         # 3-byte alternative: ∅ (U+2205) (3 bytes); 
@@ -34,6 +35,10 @@ class Settings():
     @property
     def orphan_symbol(self) -> str:
         return self._orphan_symbol
+
+    @property
+    def fileB_include_structurePart_start(self) -> bool:
+        return self._fileB_include_structurePart_start
 
     @property
     def fileB_include_structurePart_subsuming(self) -> bool:

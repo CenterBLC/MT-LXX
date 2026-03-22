@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from classes.file_generators.fileB.GntPhraseHandler import GntPhraseHandler
 
 @dataclass
 class LevelDescriptor:
@@ -15,3 +16,4 @@ class LevelDescriptor:
     """
     syntacticalStructureId: int
     isWordPhysicalPartOfSyntacticStructure: bool
+    gntPhraseHandler: GntPhraseHandler

@@ -14,9 +14,9 @@ class Settings():
         self._path_folder: str = "sp_data_gnt"
 
 
-        self._fileB_include_lxxSubphrases: bool = False
+        self._fileB_include_lxxSubphrases: bool = True
 
-        self._fileB_include_lxxPhrases: bool = True
+        self._fileB_include_lxxPhrases: bool = False
         self._fileB_include_lxxPhrases_level0: bool = True
         self._fileB_include_lxxPhrases_level1: bool = False
         self._fileB_include_lxxPhrases_level2: bool = False

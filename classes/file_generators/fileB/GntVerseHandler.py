@@ -76,6 +76,12 @@ class GntVerseHandler():
                 ) or None # returns None if the tuple is empty
         return containing_gntPhraseHandlers
     
+    def get_previous_wordHandler(self, word_id: int) -> WordHandler | None:
+        return next(
+            (wh for wh in self.wordHandlers if wh._word_id == word_id - 1)
+            , None
+        )
+
     def get_subsequent_wordHandler(self, word_id: int) -> WordHandler | None:
         return next(
             (wh for wh in self.wordHandlers if wh._word_id == word_id + 1)

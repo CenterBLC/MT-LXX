@@ -22,6 +22,7 @@ class Settings():
         self._fileB_include_lxxPhrases_level2: bool = False
         self._fileB_include_lxxPhrases_level3: bool = False
 
+        # these settings apply to any structure (subphrase, phrase, etc.)
         self._fileB_include_structurePart_start: bool = True
         self._fileB_include_structurePart_subsuming: bool = True
         self._fileB_include_structurePart_breaking: bool = True

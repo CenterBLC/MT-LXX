@@ -40,7 +40,7 @@ def main(
             continue
         if cmd.startswith("datalevel "):
             q = cmd[len("datalevel "):]
-            settings.data_level = q
+            settings.data_level = q.capitalize()
             print(f"DataLevel is set to {q}")
             continue
         if cmd == "gnt":

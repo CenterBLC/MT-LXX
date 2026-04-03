@@ -1,0 +1,99 @@
+1. Original - The original b_lwlc_idx.json includes o010240100161, fixes the 72 times the repeated wlc_id needs to be retained, includes empty spaces for missing wlc_id after o140360210121; o180060140012; o200190040052
+
+2. (patch1)- b-node: 105983, tie it to o050230050211 
+     - done by changing the lwlc_idx.tf ( very important )
+
+3. (patch2) - o010240100161; o050230050211; o070030080111; o130190060191; o190600020041 These codes get left out because they are the second wlc_id in the xml. This word is split in the BHSA. So those nodes need thse words. The original fixes the 1st instances, patch1 fixes the 2nd instances. This fixes the other 3 times.
+
+4. (patch3) - o070200130151 (140166) M has this word that is not in B. Deleted o070200130151 from lwlc_idx.tf no empty space in its place - need to see how this affects. b_lwlc_idx_patch3 created
+
+5. Major Fix - Books in Macula follow the Christian Bible books pattern while the books in BHSA follows the Tanakh - Need to rearrange the IDs according to the book - follow the book_compare.xlsx document for direction or order of movement.
+        - done by moving the necessary (book) IDs to the bottom: result in lwlc_idy.tf
+        - all patches will follow the lwlc_idy_patch4
+        
+6. (patch4) - from "lwlc_idy" - create a json file "b_lwlc_idy_patch4.json" which maps the B word nodes to the lwlc_idy ids
+        - 1 Samuel 14:32 the first word, o090140320022, after "W" in B (g_cons) is "J<F" and in M (mt_cons) is "J<V". I don't know why, but it is interesting. It doesn't change the map, so left alone. the   actual reading in "WJ<V"
+
+7. (patch5) - o090140320061 is "H" which is present in Macula and the regular BHSA text (check shebanq for 1 Samuel 14:32) but for some reason not in g_cons or g_word_utf8, where it is just an empty node like an absorbed H. So, for a temporary fix, the o090140320061 was removed from the lwlc_idy.tf and then mapped
+
+8. (patch6) - o100050020131 is "H" which is a qere thing so not present in the BHSA, which only has a "", but Macula does have it like in the previous case. use temporary fix of removing it. ASK THE HEBREW 2 QUESTION: WHY SHOULD THIS HAVE AN ARTICLE?? IT IS AN ABSOLUTE, NOT CONSTRUCT PARTICIPLE.
+
+9. (patch7) - o100080030131 is a word in the qere (?), "PRT", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up. 
+
+10. (patch8) - o100160230091 is a word in the qere (?), ">JC", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up. 
+
+11. (patch9) - o100180200201 is a word in the qere (?), "KN", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+12. (patch10) - o100210090191 is a word in the qere (?), "B", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+12a. note: 174932-174934 is "B", "", "CBT", but the XML has the o100230080071 for "B" and "CBT" (the XML does recognize there is a "" in BHSA though), the mt_cons for that id (from id.tf) is "BCBT". There is NO "B", NONE, "CBT" - interesting!
+
+13. (patch11) - o100230090111 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+14. (patch12) - o110040070181 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+15. (patch13) - o110070200121 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+16. (patch14) - o110150180151 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+17. (patch15) - o120040070161 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+18. (patch16) - 199286 has a "H" whereas the Macula only has an empty string in the corresponding word node, the qere seems to not have the H. I don't get why the Macula would have the qere as the main text. Anyways, an empty space was included after o120070120241 ["B"], this is the 4th time an empty space in the M ids is added.
+
+19. (patch17) - o120110200131 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+20. (patch18) - o120150250121 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+21. (patch19) - o120190310101 is a word in the qere (?), "YB>WT", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+22. (patch20) - o120190370091 is a word in the qere (?), "BNJ", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+23. (patch21) - o230320150102 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+24. (patch22) - o230550130061 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+25. (patch23) - o240100130101 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+26. (patch24) - o240170190101 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+27. (patch25) - o240310380031 is a word in the qere (?), "B>JM", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+28. (patch26) - o240400030151 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+29. (patch27) - o240500290131 is a word in the qere (?), "L", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+30. (patch28) - o240520320101 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+31. (patch29) - o260090110132 is a word in the qere (?), "KL", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+32. (patch30) - o260180200211 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+33. (patch31) - o260420090041 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+34. (patch32) - o180020070141 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+35. (patch33) - o200230240081 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+36. (patch34) - o200270240091 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+37. (patch35) - o080030050061 is a word in the qere (?), ">L", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+38. (patch36) - o080030170091 is a word in the qere (?), ">L", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+39. (patch37) - o250010180111 is a word in the qere (?), "H", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+40. (patch38) - o250020020041 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+41. (patch39) - o250040160121 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+42. (patch40) - o250050030041 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+43. (patch41) - o250050050061 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+44. (patch42) - o250050070041 & o250050070061 are words in the qere (?), "W", they are not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+45. (patch43) - o270020430021 is a word in the qere (?), "W", not in BHSA main (g_cons or g_word), this ID is delted from the lwlc_idy.tf and ther rest will match up.
+
+46. (patch44) - o130190060221 is a second WLC_Id in the XML, since it was in the same element, it got left out. This id was added under o130190060211 in the lwlc_idy.tf. this fixed the missing id.
+
+EOD: Leading WLC Ids have been mapped to word nodes of the BHSA Dataset. Next step is to map the other WLC Id and other word parts that may not have an WLC Id to the BHSA Word Node. The END GOAL for all this is to have the Word Node of BHSA mapped to the corresponding Macula Word Node[s]. 

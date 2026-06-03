@@ -16,13 +16,11 @@ class GntBookHandler():
 
     def get_transformed_content(self) -> list[str]:
         
-        res: list[str] = list[str]()
-        # res.append(self._book_name)
+        raw_verses: list[str] = []
         verses_ofthe_Book: tuple = self._gnt_wrapper.L.d(self._book_id, 'verse')
+        
         for verse_id in verses_ofthe_Book:
             verse_handler: GntVerseHandler = GntVerseHandler(self._manager, verse_id)
-            verse_content: str = verse_handler.get_transformed_content()
-            res.append(verse_content)
+            raw_verses.append(verse_handler.get_transformed_content())
         
-        return res
-        
+        return raw_verses

@@ -22,8 +22,7 @@ class FileB_Generator(FileGeneratorAbstract):
     def generate(self) -> None:
 
         book_ids = self._gnt_wrapper.F.otype.s('book')
-
-        all_files_content: list[str] = list[str]()
+        all_files_content: list[str] = []
 
         for book_id in book_ids:
             book_name = self._gnt_wrapper.T.bookName(book_id)
@@ -37,11 +36,11 @@ class FileB_Generator(FileGeneratorAbstract):
                 file_content: list[str] = book_handler.get_transformed_content()
                 all_files_content.extend(file_content)
         
+        # Use the inherited method to merge duplicates
+        merged_contents = self._merge_duplicate_verses(all_files_content)
+
         # do not delete. useful temporary functionality
         # all_files_content.insert(0, f"WordHandler.MaxGntPhraseAnytypeNestLevelCount = {WordHandler.MaxGntPhraseAnytypeNestLevelCount}")
 
-        self._file_writer.WriteContents(all_files_content)
+        self._file_writer.WriteContents(merged_contents)
         print("internal report: file B generated.")
-
-
-

@@ -39,3 +39,33 @@ class FileGeneratorAbstract(ABC):
     @abstractmethod
     def generate(self) -> None:
         pass
+
+    def _merge_duplicate_verses(self, raw_verses: list[str]) -> list[str]:
+        """
+        Helper method inherited by all File Generators.
+        Catches and concatenates tags/text for verses that share 
+        the exact same book, chapter, and verse address.
+        This method was created due to the GNT's I_Peter 4:1 that was found duplicate in the raw data.
+        """
+        verses_dict = {}
+        
+        for verse_content in raw_verses:
+            parts = verse_content.split('\t')
+            
+            if len(parts) >= 4:
+                prefix = f"{parts[0]}\t{parts[1]}\t{parts[2]}"
+                content = parts[3].strip()
+                
+                # Concatenate if the address already exists
+                if prefix in verses_dict:
+                    if content:
+                        verses_dict[prefix] += f" {content}"
+                else:
+                    verses_dict[prefix] = content
+            else:
+                # Fallback for malformed strings
+                if verse_content not in verses_dict:
+                    verses_dict[verse_content] = ""
+                    
+        # Reconstruct the list of strings
+        return [f"{prefix}\t{content}" for prefix, content in verses_dict.items()]

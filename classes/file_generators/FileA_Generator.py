@@ -18,9 +18,8 @@ class FileA_Generator(FileGeneratorAbstract):
     
     def generate(self) -> None:
         
-        i=0
-        file_contents=[]
-        # outputfile_suffix = '_normalized'
+        i = 0
+        raw_file_contents = []
 
         for verse in self.F.otype.s('verse'):
             text = "".join([self._feature_merger.get_word(word) + " " 
@@ -34,16 +33,13 @@ class FileA_Generator(FileGeneratorAbstract):
                         and bo == self._selected_book)
                 ):
 
-                file_contents.append(final)
-                if i<3:
+                raw_file_contents.append(final)
+                if i < 3:
                     print(final)
-                i=i+1
+                i += 1
 
-        self._file_writer.WriteContents(file_contents)
+        # Use the inherited method to merge duplicates
+        merged_contents = self._merge_duplicate_verses(raw_file_contents)
 
-        # with open('./data_gnt/input_' + selected_book + outputfile_suffix, 'w', encoding='utf-8') as file_contents:
-        #     for line in file_contents:
-        #         file_contents.write(line + '\n')
-
+        self._file_writer.WriteContents(merged_contents)
         print("internal report: file A generated.")
-

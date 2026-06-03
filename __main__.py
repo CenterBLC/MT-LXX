@@ -25,7 +25,7 @@ def main(
 
     print("MT-LXX  App ready. Type 'help' for commands, 'quit' to exit.")
 
-    fileB_generator.generate()
+    fileA_generator.generate()
     print("external report: file B generated.")
 
     while True:
